@@ -1,0 +1,33 @@
+/* hide the crud */
+
+#bottombox {
+  display:none;
+}
+
+#row2 {
+display:none;
+}
+
+#agentcounts {
+display:none;
+}
+
+
+
+/* resize whats left, since crud now hidden */
+
+#mainbody {
+bottom:0px;
+}
+
+#header {
+ width:85%;
+ font-size: 16px;
+ }
+ 
+#dtime {
+ font-size: 14px;
+ width:15%;
+} 
+ 
+

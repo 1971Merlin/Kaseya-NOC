@@ -1,0 +1,568 @@
+/*global settings - defaults*/
+body
+{
+ font-family: Arial,Helvetica,sans-serif;
+ font-size: 12px;
+ background: #f8f8f8;
+}
+
+p
+{
+ font-family: Arial,Helvetica,sans-serif;
+ font-size: 14px;
+ font-weight:bold;
+ margin: 0px 0px 10px 10px;
+}
+
+
+table { 
+  border-collapse:separate; 
+  border-spacing: 10px 2px;
+}
+
+/* special monospaced font used in config page only */
+.ini {
+ font-family: "Courier New", Courier, monospace;
+ font-size: 14px;
+}
+
+
+/* underlining in data tables only */
+.datatable  th, .datatable td { border-bottom: 1px solid gainsboro; }
+
+.datatable { 
+  float:left;
+  clear:both;
+}
+
+/* justify headings & data */
+
+.colL { vertical-align:text-top; text-align: left; }
+.colM { vertical-align:text-top; text-align: center; }
+.colR { vertical-align:text-top; text-align: right; }
+
+
+/*header container - grey box*/
+#topbox {
+ position:fixed;
+ clear:both;
+ overflow:hidden;
+ width: calc(100% - 10px);
+ width: -moz-calc(100% - 10px);
+ width: -webkit-calc(100% - 10px);
+ width: -o-calc(100% - 10px);
+ top:3px;
+ left:3px;
+ height:52px;
+ background:#f0f0f0;
+ border:1px solid gray;
+ margin-top:0px;
+ margin-right:3px;
+ margin-bottom:4px;
+ box-shadow: 3px 3px 3px #888888;
+} 
+ 
+
+
+/* DIV placeholder for logo image, header text */
+#header {
+ float:left; 
+ width:70%;
+ overflow:hidden;
+ font-size: 44px;
+ color: #3f3f3f;
+ text-align: center;
+  } 
+ 
+#agentcounts {
+ float:left;
+ width:20%;
+ overflow:hidden;
+ text-align: left;
+ font-size: 13px;
+ color: #3f3f3f;
+ }
+
+#dtime {
+ float:right;
+ width:10%;
+ overflow:hidden;
+ font-size: 20px;
+ color: #3f3f3f;
+ text-align: center;
+}
+
+#refrsh
+{
+ float:right;
+ clear:both;
+}
+
+/*  v2.0 DIVs that hold rolling core info & details */
+
+#core
+{
+font-size:16px;
+width:264px;
+}
+
+#details
+{
+ width:465px;
+ height:218px;
+ position:relative;
+ }
+
+#showRSS
+{
+ width:480px;
+ height:218px;
+ position:relative;
+ }
+
+ 
+ #leftbox
+ {
+ clear:both;
+ overflow:hidden;
+ }
+ 
+ #coredetails
+ {
+ clear:both;
+ }
+ 
+ 
+/* change mouse icon */ 
+ .pointer {
+  cursor: pointer;
+  overflow:hidden;
+}
+ 
+ /* html5 hack for images in tables */
+.pointer td img {display: block;}
+
+.spinner {
+   position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-left: -16px; /* half width of the spinner gif */
+    margin-top: -16px; /* half height of the spinner gif */
+    text-align: center;
+    z-index: 1234;
+    overflow: none;
+	width: 32px;
+	height: 34px;
+}
+
+/* special DIV holding the body DIVs which are multiple ROWs */
+
+#mainbody
+{
+position:absolute;
+top:64px;
+bottom:48px;
+left:3px;
+width: calc(100% - 8px);
+width: -moz-calc(100% - 8px);
+width: -webkit-calc(100% - 8px);
+width: -o-calc(100% - 8px);
+overflow-x:hidden;
+overflow-y:scroll;
+}
+
+/*formatting inside each panel*/
+
+/* green panel label */
+.heading
+{
+ float:left;
+ clear:both;
+ font-size: 18px;
+ color: green;
+ padding: 2px 5px 2px 5px;
+ margin-bottom: 2px;
+ width: 100%;
+ border-bottom: 1px solid gray;
+background: rgb(255,255,255); /* Old browsers */
+/* IE9 SVG, needs conditional override of 'filter' to 'none' */
+background: -moz-linear-gradient(top,  rgba(255,255,255,1) 0%, rgba(241,241,241,1) 50%, rgba(225,225,225,1) 51%, rgba(246,246,246,1) 100%); /* FF3.6+ */
+background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(255,255,255,1)), color-stop(50%,rgba(241,241,241,1)), color-stop(51%,rgba(225,225,225,1)), color-stop(100%,rgba(246,246,246,1))); /* Chrome,Safari4+ */
+background: -webkit-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(241,241,241,1) 50%,rgba(225,225,225,1) 51%,rgba(246,246,246,1) 100%); /* Chrome10+,Safari5.1+ */
+background: -o-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(241,241,241,1) 50%,rgba(225,225,225,1) 51%,rgba(246,246,246,1) 100%); /* Opera 11.10+ */
+background: -ms-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(241,241,241,1) 50%,rgba(225,225,225,1) 51%,rgba(246,246,246,1) 100%); /* IE10+ */
+background: linear-gradient(to bottom,  rgba(255,255,255,1) 0%,rgba(241,241,241,1) 50%,rgba(225,225,225,1) 51%,rgba(246,246,246,1) 100%); /* W3C */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#f6f6f6',GradientType=0 ); /* IE6-8 */
+ }
+ 
+.heading2
+{
+border-top: 1px solid gray;
+}
+
+/* showing top n items label */
+.topn
+{
+ float:right;
+ font-style: italic;
+ margin-top: 5px;
+ margin-right: 5px;
+ padding-right: 5px;
+ font-size: 10px;
+ color: #0000ff;
+}
+
+/* blank DIV to space out stuff inside a panel */
+.spacer
+{
+ float:left;
+ clear:both;
+ height:16px;
+ min-height:16px;
+}
+
+/* small box with heading & digit inside */
+.minibox
+{
+ float:left;
+ border: 1px solid gray;
+ background: #ffffff;
+ border-radius: 3px;
+ margin-right: 2px;
+ margin-left: 2px;
+ margin-bottom: 2px;
+ overflow:hidden;
+}
+
+/* small digit for panels */
+.mininum
+{
+ float:left;
+ clear:both;
+ font-size: 48px;
+ text-shadow:1px 1px 1px;
+ padding-left:3px;
+ padding-right:3px;
+ border: 1px solid gray;
+ border-radius: 3px;
+ margin: 0px 2px 2px 2px;
+ background: #ffffff; /* Old browsers */
+ background: -moz-linear-gradient(top, #ffffff 0%, #f1f1f1 50%, #e1e1e1 51%, #f6f6f6 100%); /* FF3.6+ */
+ background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(50%,#f1f1f1), color-stop(51%,#e1e1e1), color-stop(100%,#f6f6f6)); /* Chrome,Safari4+ */
+ background: -webkit-linear-gradient(top, #ffffff 0%,#f1f1f1 50%,#e1e1e1 51%,#f6f6f6 100%); /* Chrome10+,Safari5.1+ */
+ background: -o-linear-gradient(top, #ffffff 0%,#f1f1f1 50%,#e1e1e1 51%,#f6f6f6 100%); /* Opera 11.10+ */
+ background: -ms-linear-gradient(top, #ffffff 0%,#f1f1f1 50%,#e1e1e1 51%,#f6f6f6 100%); /* IE10+ */
+ background: linear-gradient(to bottom, #ffffff 0%,#f1f1f1 50%,#e1e1e1 51%,#f6f6f6 100%); /* W3C */
+ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#f6f6f6',GradientType=0 ); /* IE6-9 */ 
+}
+
+
+/* green panel label */
+.miniheading {
+ float:left;
+ clear:both;
+ font-size: 13px;
+ color: black;
+ font-weight: bold;
+ padding: 1px 4px 1px 4px;
+ margin-bottom: 2px;
+ width: 100%;
+ border-bottom: 1px solid gray;
+ background: rgb(245,246,246); /* Old browsers */
+/* IE9 SVG, needs conditional override of 'filter' to 'none' */
+background: -moz-linear-gradient(top,  rgba(245,246,246,1) 0%, rgba(219,220,226,1) 21%, rgba(184,186,198,1) 49%, rgba(221,223,227,1) 80%, rgba(245,246,246,1) 100%); /* FF3.6+ */
+background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(245,246,246,1)), color-stop(21%,rgba(219,220,226,1)), color-stop(49%,rgba(184,186,198,1)), color-stop(80%,rgba(221,223,227,1)), color-stop(100%,rgba(245,246,246,1))); /* Chrome,Safari4+ */
+background: -webkit-linear-gradient(top,  rgba(245,246,246,1) 0%,rgba(219,220,226,1) 21%,rgba(184,186,198,1) 49%,rgba(221,223,227,1) 80%,rgba(245,246,246,1) 100%); /* Chrome10+,Safari5.1+ */
+background: -o-linear-gradient(top,  rgba(245,246,246,1) 0%,rgba(219,220,226,1) 21%,rgba(184,186,198,1) 49%,rgba(221,223,227,1) 80%,rgba(245,246,246,1) 100%); /* Opera 11.10+ */
+background: -ms-linear-gradient(top,  rgba(245,246,246,1) 0%,rgba(219,220,226,1) 21%,rgba(184,186,198,1) 49%,rgba(221,223,227,1) 80%,rgba(245,246,246,1) 100%); /* IE10+ */
+background: linear-gradient(to bottom,  rgba(245,246,246,1) 0%,rgba(219,220,226,1) 21%,rgba(184,186,198,1) 49%,rgba(221,223,227,1) 80%,rgba(245,246,246,1) 100%); /* W3C */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f5f6f6', endColorstr='#f5f6f6',GradientType=0 ); /* IE6-8 */
+
+ }
+
+
+/*Top row : critical panels*/
+#row1 {
+ border:0px;
+ margin:0px;
+ clear:both;
+ overflow:hidden;
+}
+
+
+/* second row: Remaining panels */
+#row2 {
+ border:0px;
+ margin:0px;
+ clear:both;
+ overflow:hidden;
+}
+
+/* format RSSfeed text */
+
+.rss {
+ font-family: Arial,Helvetica,sans-serif;
+ font-size: 12px;
+ margin: 5px 5px 3px 5px;
+ padding: 0px 2px 5px 2px;
+ clear:both;
+ border-bottom: 1px solid #e0e0e0;
+ /*background-color:yellow;*/
+ }
+ 
+.rssL {
+float: left;
+background-image: url("images/list.gif");
+background-repeat: no-repeat;
+background-position: 0px 3px;
+padding-left:10px;
+}
+
+.rssR {
+float: right;
+padding-left: 5px;
+font-size:10px;
+}
+
+.rssDetail {
+clear: both;
+padding: 3px 0px 0px 15px;
+}
+ 
+.rss a:link,  a:visited {
+font-family: Arial,Helvetica,sans-serif;
+font-size: 13px;
+font-weight: bold;
+color: blue;
+text-decoration: none;
+ }
+
+ .rss a:hover , a:active {
+font-family: Arial,Helvetica,sans-serif;
+font-size: 13px;
+font-weight:bold;
+color: blue;
+text-decoration: none;
+ }
+
+/*Panel DIVs: individual panel's layout */
+
+.panel {
+ float:left;
+ border:1px solid gray;
+ background: #ffffff;
+ overflow:hidden;
+ padding:0px;
+ margin-top:2px;
+ margin-right:5px;
+ margin-bottom:4px;
+ box-shadow: 3px 3px 3px #888888;
+ border-radius: 3px;
+}
+
+/* the DIVs with graphs/charts inside */
+
+.graph {
+ float:left;
+ clear:both;
+}
+
+
+/* footer blue box */
+#bottombox
+ {
+ position:fixed;
+ clear:both;
+ overflow:hidden;
+ width: calc(100% - 10px);
+ width: -moz-calc(100% - 10px);
+ width: -webkit-calc(100% - 10px);
+ width: -o-calc(100% - 10px);
+/* width:99%;*/
+ bottom:2px;
+ left:3px;
+ height:36px;   /* Height of the footer */
+ min-height:36px;
+ background:#99ccff;
+ border: 1px solid #0000cc;
+ margin-top:0px;
+ margin-right:3px;
+ margin-bottom:3px;
+ box-shadow: 3px 3px 3px #888888;
+ border-radius: 3px;
+}
+
+
+/*DIVs within footer*/
+#leftstat
+{
+ float:left;
+ overflow:hidden;
+ font-size: 16px;
+ margin-top:10px;
+}
+
+#rightstat
+{
+ float:left;
+ overflow:hidden;
+ font-size: 10px;
+}
+
+#NOCconfig
+{
+ float:right;
+ overflow:hidden;
+ font-size: 10px;
+}
+
+/* stuff for the config form */
+
+#topheading {
+  width:100%;
+  clear:both;
+  float:left;
+  overflow:hidden;
+  font-size: 18px;
+  line-height: 32px;
+  font-weight: bold;
+  text-align: center;
+  color: #12F;
+  }
+  
+#inputform {
+width:100%;
+  clear:both;
+  float:left;
+  overflow:hidden;
+}
+
+input {
+      font-family: sans-serif;                
+}
+
+form  {
+ margin:auto;
+ position:relative;
+ width:800px;
+ border-radius: 10px;
+ padding:10px;
+ border: 1px solid #999;
+ background: #ffffff;
+}
+
+fieldset {
+  border:1px solid #09c;
+  margin-bottom:10px;
+}
+
+label {
+ float:left;
+ width:125px;
+ white-space:nowrap;
+ margin-right:0.5em;
+ padding-top:0.35em;
+ text-align:right;
+ font-weight:bold;
+}
+
+legend {
+ font-size: 14px;
+ line-height: 24px;
+ font-weight: bold;
+ color: #09C;
+ text-align:left;
+}
+ 
+custom-tooltip-styling {
+ font-size: 12px;
+ background: #f8f8f8;
+}
+
+ 
+/* config page org  & scope */
+.orgscope  th, .orgscope td { border-bottom: 1px solid gainsboro; }
+.orgscope th:first-child, .orgscope td:first-child { border-bottom: none; }
+
+
+/* config page K modules enable / disable */
+.modules  th, .modules td { border-bottom: 1px solid gainsboro; }
+.modules th:first-child , .modules td:first-child{ border-bottom: none; }
+ 
+
+/* hide jqueryUI dialog close button & fix dialog size */
+
+.no-close .ui-dialog-titlebar-close {
+  display: none;
+}
+
+/* pop-ups don't inherit font! */
+.ui-dialog { 
+ font-family: Arial,Helvetica,sans-serif;
+ font-size: 12px;
+}
+
+.ui-dialog-title {
+ font-family: Arial,Helvetica,sans-serif;
+ font-size: 12px;
+  outline:none;
+}
+
+
+
+/* following all for rotated text on table headers */
+
+.table-header-rotated th.row-header{
+  width: auto;
+}
+
+.table-header-rotated th{
+  vertical-align: bottom;
+}
+
+.table-header-rotated th.rotate-45{
+  height: 70px;
+  width: 20px;
+  min-width: 20px;
+  max-width: 20px;
+  position: relative;
+  vertical-align: bottom;
+  padding: 0;
+}
+
+.table-header-rotated th.rotate-45 > div{
+  position: relative;
+  top: 0px;
+  left: 30px;
+  height: 100%;
+  -ms-transform: skew(-45deg, 0deg);
+  -moz-transform: skew(-45deg, 0deg);
+  -webkit-transform: skew(-45deg, 0deg);
+  -o-transform: skew(-45deg, 0deg);
+  transform: skew(-45deg, 0deg);
+  overflow: hidden;
+}
+
+.table-header-rotated th.rotate-45 span {
+  -ms-transform: skew(45deg, 0deg) rotate(315deg);
+  -moz-transform: skew(45deg, 0deg) rotate(315deg);
+  -webkit-transform: skew(45deg, 0deg) rotate(315deg);
+  -o-transform: skew(45deg, 0deg) rotate(315deg);
+  transform: skew(45deg, 0deg) rotate(315deg);
+  position: absolute;
+  bottom: 30px; 
+  left: -37px;
+  display: inline-block;
+  width: 88px; 
+  text-align: left;
+  white-space: nowrap;
+}
+
+/* external image window size */
+
+#showEXT {
+width:254px;
+height:218px;
+}
+
+

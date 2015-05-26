@@ -1,0 +1,18 @@
+/* hide the crud */
+
+#row2 {
+display:none;
+}
+
+#agentcounts {
+display:none;
+}
+
+#leftstat {
+display:none;
+}
+
+
+#header {
+ width:90%;
+ }
