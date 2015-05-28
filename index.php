@@ -9,7 +9,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1,  user-scalable=yes" />
 
 <!-- jquery libraries -->
-<script src="jquery-1.11.1.min.js" type="text/javascript"></script>
+<script src="jquery-1.11.3.min.js" type="text/javascript"></script>
 
 <!-- cookie library -->
 <script src="jcookie1.4.1/jquery.cookie.js"></script>

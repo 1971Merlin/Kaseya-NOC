@@ -102,15 +102,25 @@ if (isset($_POST['org']))  $config['config']['org_filter']=$_POST['org']; else  
  if (isset($_POST['VSAUsers'])) $config['strip']['showVSAUsers']="1"; else $config['strip']['showVSAUsers']="0";
  if (isset($_POST['showEXT'])) $config['strip']['showEXT']="1"; else $config['strip']['showEXT']="0";
  if (isset($_POST['showRSS'])) $config['strip']['showRSS']="1"; else $config['strip']['showRSS']="0";
- if (isset($_POST['extURL'])) $config['strip']['extURL']=$_POST['extURL']; else $config['strip']['extURL']="";
- if (isset($_POST['rssURL'])) $config['strip']['rssURL']=$_POST['rssURL']; else $config['strip']['rssURL']="";
+ if (isset($_POST['extURL'])) $config['strip']['extURL']=$_POST['extURL']; else { $config['strip']['showEXT']="0"; $config['strip']['extURL']=""; }
+ if (isset($_POST['rssURL'])) $config['strip']['rssURL']=$_POST['rssURL']; else { $config['strip']['showRSS']="0"; $config['strip']['rssURL']=""; }
  if (isset($_POST['secstats'])) $config['strip']['showSecurity']="1"; else $config['strip']['showSecurity']="0";
  if (isset($_POST['avstats'])) $config['strip']['showAV']="1"; else $config['strip']['showAV']="0";
  if (isset($_POST['budrstats'])) $config['strip']['showBUDR']="1"; else $config['strip']['showBUDR']="0";
  if (isset($_POST['polstats'])) $config['strip']['showPolicy']="1"; else $config['strip']['showPolicy']="0";
  if (isset($_POST['checkin'])) $config['strip']['showLastCheckin']="1"; else $config['strip']['showLastCheckin']="0";
 
+ 
 
+ 
+ 
+// fix RSS field blank?
+ if ($config['strip']['rssURL']=='') { $config['strip']['showRSS']="0"; }
+ 
+// fix URL field blank?
+ if ($config['strip']['extURL']=='') { $config['strip']['showEXT']="0"; }
+
+ 
  
 // main panels on/off 
 
@@ -130,6 +140,12 @@ if (isset($_POST['org']))  $config['config']['org_filter']=$_POST['org']; else  
  if (isset($_POST['lowdisk'])) $config['panels']['showLowDisk']="1"; else $config['panels']['showLowDisk']="0";
  if (isset($_POST['RCinfo'])) $config['panels']['showRC']="1"; else $config['panels']['showRC']="0";
 
+ 
+ 
+ $cache_file = $_SERVER['DOCUMENT_ROOT'].'/rsscache.rss';
+ if ($config['strip']['showRSS']==1 && file_exists($cache_file)) { unlink($cache_file); }
+ 
+  
 
  // actual save here //
   
