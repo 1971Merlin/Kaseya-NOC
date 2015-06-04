@@ -1,10 +1,9 @@
-<!DOCTYPE html>
-<!-- <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"> -->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <?php require_once 'dblogin.php'; ?>
 <head>
 <title><?php echo $NOCtitle;?></title>
-<!-- <meta http-equiv="X-UA-Compatible" content="IE=9" > -->
+<meta http-equiv="X-UA-Compatible" content="IE=9" >
 <meta name="description" content="NOC Status Display for Kaseya">
 <meta name="viewport" content="width=device-width, initial-scale=1,  user-scalable=yes" />
 

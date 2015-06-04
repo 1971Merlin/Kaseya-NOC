@@ -63,11 +63,14 @@ foreach ($slist as $key => $row) {
      die( print_r( sqlsrv_errors(), true));
   }
 
-  $res = sqlsrv_fetch_array( $stmt2, SQLSRV_FETCH_ASSOC);
-
+  if($row['online'] < 198) {
   
-  $slist[$key]['totalOnline'] = $res['totalOnline'];
-  $slist[$key]['measureTime'] = $res['measureTime'];
+	$res = sqlsrv_fetch_array( $stmt2, SQLSRV_FETCH_ASSOC);
+	$slist[$key]['totalOnline'] = $res['totalOnline'];
+	$slist[$key]['measureTime'] = $res['measureTime'];
+	
+  }
+
 
 }
 
@@ -123,7 +126,7 @@ foreach ($slist as $key => $row) {
   
   
   echo "<td class=\"colM\">";
-  if ($row['online']==0) { echo "--"; } else { echo round(($row['totalOnline']/$row['measureTime'])*100,2)."%"; }
+  if ($row['online']==0 or $row['online']>197) { echo "--"; } else { echo round(($row['totalOnline']/$row['measureTime'])*100,2)."%"; }
   echo "</td>";
   
   echo "</tr>";

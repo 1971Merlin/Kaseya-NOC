@@ -105,7 +105,7 @@ if ($KVer>6.3) {
  echo "<td class=\"colM\">".$kpatch."</td>";
 if ($KVer>6.5) {
   $col='black';
-  if ($row6['PatchLevel'] != $kpatch) $col='red';
+  if (trim($row6['PatchLevel']) != trim($kpatch)) $col='red';
   echo "<td class=\"colM\"><font color=\"".$col."\">".$row6['PatchLevel']."</font></td>";
 }
  echo "</tr>";

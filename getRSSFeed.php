@@ -29,9 +29,7 @@ if (file_exists($cache_file) && $timedif < $cache_time) {
 // display
 
 	foreach ($rss->getElementsByTagName('channel') as $node) {
-		
-		$title = $node->getElementsByTagName('title')->item(0)->nodeValue;
-		
+		$title = isset($node->getElementsByTagName('title')->item(0)->nodeValue) ? $node->getElementsByTagName('title')->item(0)->nodeValue : "";
 	}
 	
 	
@@ -39,12 +37,13 @@ if (file_exists($cache_file) && $timedif < $cache_time) {
 
 	$feed = array();
 	foreach ($rss->getElementsByTagName('item') as $node) {
-		$item = array ( 
-			'title' => $node->getElementsByTagName('title')->item(0)->nodeValue,
-			'desc' => $node->getElementsByTagName('description')->item(0)->nodeValue,
-			'link' => $node->getElementsByTagName('link')->item(0)->nodeValue,
-			'date' => $node->getElementsByTagName('pubDate')->item(0)->nodeValue,
-			);
+		$item=array();
+		
+		if (isset($node->getElementsByTagName('title')->item(0)->nodeValue)) { $item['title'] = $node->getElementsByTagName('title')->item(0)->nodeValue; }
+		if (isset($node->getElementsByTagName('description')->item(0)->nodeValue)) { $item['desc'] = $node->getElementsByTagName('description')->item(0)->nodeValue; }
+		if (isset($node->getElementsByTagName('link')->item(0)->nodeValue)) { $item['link'] = $node->getElementsByTagName('link')->item(0)->nodeValue; }
+		if (isset($node->getElementsByTagName('pubDate')->item(0)->nodeValue)) { $item['date'] = $node->getElementsByTagName('pubDate')->item(0)->nodeValue; }
+		
 		array_push($feed, $item);
 	}
 	
@@ -59,10 +58,10 @@ echo "</div>";
 
 
 	for($x=0;$x<$limit;$x++) {
-		$title = str_replace(' & ', ' &amp; ', $feed[$x]['title']);
-		$link = $feed[$x]['link'];
-		$description = $feed[$x]['desc'];
-		$date = date('F d', strtotime($feed[$x]['date']));
+		$title = isset($feed[$x]['title']) ? str_replace(' & ', ' &amp; ', $feed[$x]['title']) : "";
+		$link = isset($feed[$x]['link']) ? $feed[$x]['link'] : "";
+		$description = isset($feed[$x]['desc']) ? $feed[$x]['desc'] : "";
+		$date = isset($feed[$x]['date']) ? date('F d', strtotime($feed[$x]['date'])) : "";
 		echo '<div class="rss">';
 			echo '<div class="rssL"><a href="'.$link.'" title="'.$title.'" target="_blank">'.$title.'</a></div>';
 			echo '<div class="rssR">'.$date.'</div>';
