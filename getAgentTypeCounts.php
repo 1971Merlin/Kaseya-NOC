@@ -216,6 +216,7 @@ $vista=0;
 $o7=0;
 $o8=0;
 $o81=0;
+$o10=0;
 $osx=0;
 $o0=0;
 
@@ -229,13 +230,14 @@ if( $stmt2 === false )
 while( $row = sqlsrv_fetch_array( $stmt2, SQLSRV_FETCH_ASSOC))
 {
 
-	echo "<tr><td class=\"colL\"  ref=\"{$row['osInfo']}\">";
+	echo "<tr><td class=\"colL\" ref=\"{$row['osInfo']}\">";
 
 	if ($row['ostype'] == "Mac OS X") { echo "<img src=\"images/macosx.gif\"> ".$row['osInfo']."</td>"; $osx+=$row['count']; }
 	else {
 		if ($row['ostype'] == "7") { echo "<img src=\"images/win7.gif\"> Windows "; $o7+=$row['count']; }
 		if ($row['ostype'] == "8") { echo "<img src=\"images/win8.gif\"> Windows "; $o8+=$row['count']; }
 		if ($row['ostype'] == "8.1") { echo "<img src=\"images/win8.gif\"> Windows "; $o81+=$row['count']; }
+		if ($row['ostype'] == "10") { echo "<img src=\"images/win10.gif\"> Windows "; $o10+=$row['count']; }
 		if ($row['ostype'] == "XP") { echo "<img src=\"images/winxp.gif\"> Windows "; $xp+=$row['count']; }
 		if ($row['ostype'] == "Vista") { echo "<img src=\"images/winvista.gif\"> Windows "; $vista+=$row['count']; }
 		if ($row['ostype'] == "2000") { echo "<img src=\"images/win2k.gif\"> Windows "; $o0+=$row['count']; }
@@ -280,6 +282,7 @@ if ($vista>0) {$datax[] = "['Vista', ".$vista."]"; }
 if ($o7>0) {$datax[] = "['Win 7', ".$o7."]"; }
 if ($o8>0) {$datax[] = "['Win 8', ".$o8."]"; }
 if ($o81>0) {$datax[] = "['Win 8.1', ".$o81."]"; }
+if ($o10>0) {$datax[] = "['Win 10', ".$o10."]"; }
 if ($o0>0) {$datax[] = "['Win 2000', ".$o0."]"; }
 
 
