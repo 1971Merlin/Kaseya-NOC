@@ -115,7 +115,7 @@ if ($KVer > 7 ) {
 	echo "<tr><td class=\"colL\">".$value['adminName']."</td>";
 	
 	echo "<td class=\"colM\">";
-	if ($value['completed'] == 0) echo "Active";
+	if ($value['completed'] == 0) echo "<img src=\"images/systemok.gif\" title=\"Active Session\">";
 	echo "</td>";
 	echo "<td class=\"colL\">".$value['machine']."</td>";
 	echo "<td class=\"colL\">".$value['time']->format($datestyle." ".$timestyle)."</td>";

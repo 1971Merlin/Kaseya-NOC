@@ -357,7 +357,7 @@ echo "<div class=\"minibox\" style=\"clear:both\">";
   echo "<div class=\"heading\">";
   echo "Top 5 Active Threats";
   echo "</div>";
-  echo "<div id=\"activeThreats\" style=\"width: 400px; height: 280px\"></div>";
+  echo "<div id=\"activeThreats\" class=\"avGraph\"></div>";
 echo "</div>";
 
 $datax = array();
@@ -420,6 +420,7 @@ center: ['50%','50%'],
 animation: false,
 depth: 25,
 dataLabels: {
+distance: 15,
 enabled: true,
 format: '{point.name} : {point.y}',
 style: {
@@ -451,11 +452,11 @@ pointFormat: '{series.name}: {point.y}',
 
 // virus vault threats graph
 
-echo "<div class=\"minibox\" >";
+echo "<div class=\"minibox\">";
   echo "<div class=\"heading\">";
   echo "Top 5 Virus Vault Threats";
   echo "</div>";
-  echo "<div id=\"vaultThreats\" style=\"width: 400px; height: 280px\"></div>";
+  echo "<div id=\"vaultThreats\" class=\"avGraph\"></div>";
 echo "</div>";
 
 $datax = array();
@@ -518,6 +519,7 @@ center: ['50%','65%'],
 animation: false,
 depth: 25,
 dataLabels: {
+distance: 15,
 enabled: true,
 format: '{point.name} : {point.y}',
 style: {

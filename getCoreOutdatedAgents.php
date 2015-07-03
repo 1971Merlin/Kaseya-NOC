@@ -13,7 +13,10 @@ if ($id=='r') { $left=false; }
 
 $tsql = "select agentVersion from siteparams";
  
-$tsql2 = "select top 1 agentVersion from users order by agentVersion desc";
+$tsql2 = "select top 1 agentVersion from users
+ join userIpInfo ip on ip.agentGuid = users.agentGuid
+ where lower(ostype) <> 'mac os x' and lower(ostype) != 'linux'
+ order by agentVersion desc";
 
 
 $stmt = sqlsrv_query( $conn, $tsql);
@@ -111,7 +114,8 @@ if ($tally!=0) {
   }
   
   
-  echo '<p>Current Agent Version is '.fmtver($val)."</p>";
+  echo '<p>Server current Windows agent is '.fmtver($topver)."</br>";
+  echo 'Highest Windows agent present is '.fmtver($realver)."</p>";
   echo "<table id=\"oldagents\" class=\"datatable\">";
   echo "<tr><th class=\"colL\">Agent Name</th><th class=\"colM\">Version</th></tr>";
 

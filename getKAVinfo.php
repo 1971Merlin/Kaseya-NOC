@@ -390,6 +390,10 @@ if ($row5['num']!=0) {
 }
 
 
+//* spacer *//
+echo "<div class=\"spacer\"></div>";
+
+
 
 // active threats graph
 
@@ -397,7 +401,7 @@ echo "<div class=\"minibox\" style=\"clear:both\">";
   echo "<div class=\"heading\">";
   echo "Top 5 Active Threats";
   echo "</div>";
-  echo "<div id=\"kavResolved\" style=\"width: 400px; height: 280px\"></div>";
+  echo "<div id=\"kavThreats\" class=\"avGraph\"></div>";
 echo "</div>";
 
 $datax = array();
@@ -405,100 +409,6 @@ $datax = array();
 while( $row7 = sqlsrv_fetch_array( $stmt7, SQLSRV_FETCH_ASSOC))
 {
   $datax[]= "['".$row7['name']."', ".$row7['count']."]";
-}
-
-?>
-<script type="text/javascript">
-var chartKAVRES;
-
-$(document).ready(function () {
-
-	Highcharts.setOptions({
-global: {
-useUTC: false
-		},
-credits: {
-enabled: false
-		}
-	});	
-
-if (chartKAVRES) chartKAVRES.destroy();
-
-chartSVR = new Highcharts.Chart({
-
-chart: {
-renderTo: 'kavResolved',
-type: 'pie',
-options3d: {
-enabled: false,
-alpha: 45,
-beta: 0,
-},
-height: 252,
-width: 400,	
-margin: [0, 0, 0, 0],
-},
-tooltip: { enabled: true },
-legend: {
-enabled: true,
-align: 'left',
-labelFormat: '<b>{name}</b> ({percentage:.1f}%)',
-verticalAlign: 'top',
-layout: 'vertical',
-symbolHeight: 9,
-itemStyle: { fontSize: '8px', fontWeight: 'normal' },
-margin: 0,
-borderWidth: 1,
-borderRadius: 3,
-backgroundColor: '#f0f0f0'
-},
-plotOptions: {
-pie: {
-center: ['50%','65%'],
-animation: false,
-depth: 25,
-dataLabels: {
-enabled: true,
-format: '{point.name} : {point.y}',
-style: {
-fontSize: '9px',
-width: '120px'
-},
-},
-showInLegend: true,
-allowPointSelect: false,
-},
-},
-title: { text: null	},
-series: [{
-name: 'Active Threats',
-data: [<?php echo join($datax, ',') ?>],
-tooltip: {
-headerFormat: '<b>{point.key}</b><br/>',
-pointFormat: '{series.name}: {point.y}',
-			}
-		}]
-	})
-});
-</script>
-<?php
-
-
-
-// resolved threats graph
-
-echo "<div class=\"minibox\" style=\"float:left\">";
-  echo "<div class=\"heading\">";
-  echo "Top 5 Resolved Threats";
-  echo "</div>";
-  echo "<div id=\"kavThreats\" style=\"width: 400px; height: 280px\"></div>";
-echo "</div>";
-
-$datax = array();
-
-while( $row8 = sqlsrv_fetch_array( $stmt8, SQLSRV_FETCH_ASSOC))
-{
-  $datax[]= "['".$row8['name']."', ".$row8['count']."]";
 }
 
 ?>
@@ -552,6 +462,102 @@ center: ['50%','65%'],
 animation: false,
 depth: 25,
 dataLabels: {
+distance: 15,
+enabled: true,
+format: '{point.name} : {point.y}',
+style: {
+fontSize: '9px',
+width: '120px'
+},
+},
+showInLegend: true,
+allowPointSelect: false,
+},
+},
+title: { text: null	},
+series: [{
+name: 'Active Threats',
+data: [<?php echo join($datax, ',') ?>],
+tooltip: {
+headerFormat: '<b>{point.key}</b><br/>',
+pointFormat: '{series.name}: {point.y}',
+			}
+		}]
+	})
+});
+</script>
+<?php
+
+
+
+// resolved threats graph
+
+echo "<div class=\"minibox\">";
+  echo "<div class=\"heading\">";
+  echo "Top 5 Resolved Threats";
+  echo "</div>";
+  echo "<div id=\"kavResolved\" class=\"avGraph\"></div>";
+echo "</div>";
+
+$datax = array();
+
+while( $row8 = sqlsrv_fetch_array( $stmt8, SQLSRV_FETCH_ASSOC))
+{
+  $datax[]= "['".$row8['name']."', ".$row8['count']."]";
+}
+
+?>
+<script type="text/javascript">
+var chartKAVRESOLVED;
+
+$(document).ready(function () {
+
+	Highcharts.setOptions({
+global: {
+useUTC: false
+		},
+credits: {
+enabled: false
+		}
+	});	
+
+if (chartKAVRESOLVED) chartKAVRESOLVED.destroy();
+
+chartSVR = new Highcharts.Chart({
+
+chart: {
+renderTo: 'kavResolved',
+type: 'pie',
+options3d: {
+enabled: false,
+alpha: 45,
+beta: 0,
+},
+height: 252,
+width: 400,	
+margin: [0, 0, 0, 0],
+},
+tooltip: { enabled: true },
+legend: {
+enabled: true,
+align: 'left',
+labelFormat: '<b>{name}</b> ({percentage:.1f}%)',
+verticalAlign: 'top',
+layout: 'vertical',
+symbolHeight: 9,
+itemStyle: { fontSize: '8px', fontWeight: 'normal' },
+margin: 0,
+borderWidth: 1,
+borderRadius: 3,
+backgroundColor: '#f0f0f0'
+},
+plotOptions: {
+pie: {
+center: ['50%','65%'],
+animation: false,
+depth: 25,
+dataLabels: {
+distance: 15,
 enabled: true,
 format: '{point.name} : {point.y}',
 style: {

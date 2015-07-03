@@ -7,10 +7,10 @@ include 'dblogin.php';
 $tsql = "select distinct top ".$resultcount." st.displayName as MachineName, DriveLetter, TotalSpace, UsedSpace, FreeSpace,
  (cast(freespace as float)/cast(totalspace as float))*100 as percFree,
  rank = case
-   when FreeSpace < 1024*10 and (cast(freespace as float)/cast(totalspace as float))*100 < 10 then 1
-   when FreeSpace < 1024*10 or (cast(freespace as float)/cast(totalspace as float))*100 < 10 then 2
-   when FreeSpace < 1024*15 and (cast(freespace as float)/cast(totalspace as float))*100 < 15 then 3
-   when FreeSpace < 1024*15 or (cast(freespace as float)/cast(totalspace as float))*100 < 15 then 4
+   when FreeSpace <= 1024*10 and (cast(freespace as float)/cast(totalspace as float))*100 <= 10 then 1
+   when FreeSpace <= 1024*10 or (cast(freespace as float)/cast(totalspace as float))*100 <= 10 then 2
+   when FreeSpace <= 1024*15 and (cast(freespace as float)/cast(totalspace as float))*100 <= 15 then 3
+   when FreeSpace <= 1024*15 or (cast(freespace as float)/cast(totalspace as float))*100 <= 15 then 4
    else 5
  end, st.online as online, st.currentLogin, VolumeName
  from vCurrDiskInfo";
@@ -21,12 +21,12 @@ if ($org_filter!="Master") { $tsql.="
  $tsql.=" join vAgentLabel st on st.agentGuid = vCurrdiskInfo.agentGuid
  where DriveType = 'Fixed' and TotalSpace >0 and VolumeName not like '%recovery%' and VolumeName not like 'System Reserved' and VolumeName not like 'HP_TOOLS'
  and case
-   when FreeSpace < 1024*10 and (cast(freespace as float)/cast(totalspace as float))*100 < 10 then 1
-   when FreeSpace < 1024*10 or (cast(freespace as float)/cast(totalspace as float))*100 < 10 then 2
-   when FreeSpace < 1024*15 and (cast(freespace as float)/cast(totalspace as float))*100 < 15 then 3
-   when FreeSpace < 1024*15 or (cast(freespace as float)/cast(totalspace as float))*100 < 15 then 4
+   when FreeSpace <= 1024*10 and (cast(freespace as float)/cast(totalspace as float))*100 <= 10 then 1
+   when FreeSpace <= 1024*10 or (cast(freespace as float)/cast(totalspace as float))*100 <= 10 then 2
+   when FreeSpace <= 1024*15 and (cast(freespace as float)/cast(totalspace as float))*100 <= 15 then 3
+   when FreeSpace <= 1024*15 or (cast(freespace as float)/cast(totalspace as float))*100 <= 15 then 4
    else 5
-  end <5
+  end < 5
   order by rank, FreeSpace, machineName";
 
 

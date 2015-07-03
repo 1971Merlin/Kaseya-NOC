@@ -662,10 +662,11 @@ function toggle(className,parentState){
 <?php if ($res!=null) { echo $lic_data[$res]['ref']."</td><td class=\"colM\">".$lic_data[$res]['version']; }  else { echo 'Not Installed</td><td>'; } ?>
 </td></tr>
 
-<tr><!--<td>
+<!--<tr><td>
 <label for="SC">Security Centre Panel</label>
 <input type="checkbox" name="SCAV" class='list2' <?php if($config['panels']['showSCAV']==true){echo "checked";} ?>>
-</td>--><td></td><td></td></tr>
+</td><td></td><td></td></tr>
+-->
 
 <tr><td>
 <label for="budr">Backup (KBU) Panels</label>

@@ -13,18 +13,22 @@ $rss = new DOMDocument();
 $cache_file = $_SERVER['DOCUMENT_ROOT'].'/rsscache.rss';
 $timedif = @(time() - filemtime($cache_file));
 
-if (file_exists($cache_file) && $timedif < $cache_time) {
+
+if (file_exists($cache_file) && $timedif < $cache_time && !isset($_GET['reload'])) {
     	$rss->load($cache_file);
 } else {
     $rss->load($rssurl);
-
+	
 	$string = $rss->saveXML();
 	
     if ($f = @fopen($cache_file, 'w')) {
         fwrite ($f, $string, strlen($string));
-        fclose($f);
+        fclose($f);		
     }
 }
+
+$lastrefresh = filemtime($cache_file);
+	
 
 // display
 
@@ -54,7 +58,8 @@ if (file_exists($cache_file) && $timedif < $cache_time) {
 
 echo "<div class=\"heading\">RSS Feed : ".$title;
 echo "<div class=\"topn\">showing first ".$limit."</div>";
-echo "</div>";		
+echo "<div style=\"float:right; margin-right:7px;\"><a href=\"getRSSFeed.php?reload\" title=\"Last refreshed ".date($datestyle." ".$timestyle,$lastrefresh)."\"><img src=\"images/refresh.png\"></a></div>";
+echo "</div>";
 
 
 	for($x=0;$x<$limit;$x++) {
