@@ -41,7 +41,6 @@ if( $conn === false )
 
   if ($scope_filter!=null) { $scope_filter_sql = " and foo.scope_ref = '".$scope_filter."'"; }
 /*the next line may be redundant by the following code ? */
- /* if ($scope_filter=='Master') { $scope_filter_sql = ""; }*/
  
   $usescopefilter = false; 
   
@@ -122,9 +121,7 @@ if (!isset($config['panels']['showBUDR'])) { $config['panels']['showBUDR'] = tru
 if (!isset($config['panels']['showAv'])) { $config['panels']['showAv'] = true; }
 if (!isset($config['panels']['showKAV'])) { $config['panels']['showKAV'] = true; }
 if (!isset($config['panels']['showSEP'])) { $config['panels']['showSEP'] = true; }
-//if (!isset($config['panels']['showSCAV'])) { $config['panels']['showSCAV'] = true; }
 if (!isset($config['panels']['showAlarms'])) { $config['panels']['showAlarms'] = true; }
-//if (!isset($config['panels']['showSMART'])) { $config['panels']['showSMART'] = true; }
 if (!isset($config['panels']['showUptime'])) { $config['panels']['showUptime'] = true; }
 if (!isset($config['panels']['showPatching'])) { $config['panels']['showPatching'] = true; }
 if (!isset($config['panels']['showLowDisk'])) { $config['panels']['showLowDisk'] = true; }

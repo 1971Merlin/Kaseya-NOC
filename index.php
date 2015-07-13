@@ -386,10 +386,6 @@ function loadCorePanel(divnameL,divnameR,scriptname,typ) {
 
 }
 
-
-
-
-
 </script>
 </body>
 </html>

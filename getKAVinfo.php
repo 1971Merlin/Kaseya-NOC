@@ -3,19 +3,23 @@ $pageContent = null;
 ob_start();
 include 'dblogin.php';
 
-$tsql = "select distinct top ".$resultcount." MachineID as machName, Name, HasActiveThreats, LastUpdated, BaseDate,
+$tsql = "select distinct top ".$resultcount." st.displayName as machName, Name, HasActiveThreats, LastUpdated, BaseDate, RebootNeeded,
  OldDefs = case
    when BaseDate < DATEADD(day,-14,getutcdate()) then 1
    else 0
 	   end,
  ClientVersion, st.online, st.currentLogin
-  from kav.vMachines as kav";  
+  from kav.kasperskyFeature as kav";  
 if ($usescopefilter==true) { $tsql.=" join vdb_Scopes_Machines foo on (foo.agentGuid = kav.agentGuid and foo.scope_ref = '".$scope_filter."')"; }
 if ($org_filter!="Master") { $tsql.=" 
  join dbo.DenormalizedOrgToMach on kav.agentGuid = dbo.DenormalizedOrgToMach.AgentGuid
   and dbo.DenormalizedOrgToMach.OrgId = (select id from kasadmin.org where kasadmin.org.ref = '".$org_filter."')"; }
   $tsql.=" join vAgentLabel st on st.agentGuid = kav.agentGuid 
-  order by HasActiveThreats DESC, BaseDate, LastUpdated, ClientVersion";
+  join kav.KasperskyProfile ON kav.AppliedProfileId = kav.KasperskyProfile.Id
+  
+  where RebootNeeded=1 or HasActiveThreats=1 or BaseDate < DATEADD(day,-14,getutcdate()) or ClientVersion not like ( select availableversion from SecurityCenter.InstallerVersion where installername like '%Kaspersky%' )
+  
+  order by HasActiveThreats DESC, RebootNeeded DESC, BaseDate, LastUpdated, ClientVersion";
 
   
   
@@ -67,7 +71,7 @@ if ($org_filter!="Master") { $tsql6.="
 
 // top active threats count for graph
   
- $tsql7 = "select top 5 count (distinct name) as count, name
+ $tsql7 = "select top 5 count (name) as count, name
   from kav.ThreatDetection as kav";  
 if ($usescopefilter==true) { $tsql7.=" join vdb_Scopes_Machines foo on (foo.agentGuid = kav.agentGuid and foo.scope_ref = '".$scope_filter."')"; }
 if ($org_filter!="Master") { $tsql7.=" 
@@ -76,6 +80,23 @@ if ($org_filter!="Master") { $tsql7.="
   $tsql7.=" where Status in (0,1,2,6)
   group by name
   order by count desc";
+ 
+/*
+0 = Infected 
+1 = Suspicious 
+2 = Detected 
+3 = Disinfected 
+4 = Deleted 
+5 = Other 
+6 = Unknown 
+7 = Quarantined 
+8 = QuarantinedRestoreRequest 
+9 = Restored 
+10 = QuarantinedDeleteRequest 
+11 = AddedByUser 
+12 = RemediatedByUser
+*/
+
  
 // top resolved threats count for graph
   
@@ -286,7 +307,7 @@ echo "</div>";
 
 echo "<div class=\"datatable\">";
 echo "<table id=\"kavlist\">";
-echo "<tr><th class=\"colL\">Machine Name</th><th class=\"colL\">Profile Name</th><th class=\"colL\">Active Threats</th><th class=\"colL\">Last Client Update</th><th class=\"colL\">Definition File</th><th class=\"colL\">Version</th></tr>";
+echo "<tr><th class=\"colL\">Machine Name</th><th class=\"colL\">Profile Name</th><th class=\"colL\">Active Threats</th><th class=\"colL\">Last Client Update</th><th class=\"colL\">Definition File</th><th class=\"colL\">Version</th><th class=\"colM\">Reboot Needed</th></tr>";
 
 
 while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC))
@@ -317,6 +338,12 @@ while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC))
   echo "<td class=\"colL\"><font color=\"".$colr."\">".$defdate."</font></td>";
 
   echo "<td class=\"colL\">".$row['ClientVersion']."</td>";
+
+    echo "<td class=\"colM\">";
+	if ($row['RebootNeeded']==1) { echo "Yes"; } else { echo "No"; }
+	echo "</td>";
+
+
   echo "</tr>";
 }
 
@@ -411,6 +438,8 @@ while( $row7 = sqlsrv_fetch_array( $stmt7, SQLSRV_FETCH_ASSOC))
   $datax[]= "['".$row7['name']."', ".$row7['count']."]";
 }
 
+if ( count($datax)>0 ) { 
+
 ?>
 <script type="text/javascript">
 var chartKAVTHREAT;
@@ -487,7 +516,7 @@ pointFormat: '{series.name}: {point.y}',
 });
 </script>
 <?php
-
+}
 
 
 // resolved threats graph
@@ -505,6 +534,8 @@ while( $row8 = sqlsrv_fetch_array( $stmt8, SQLSRV_FETCH_ASSOC))
 {
   $datax[]= "['".$row8['name']."', ".$row8['count']."]";
 }
+
+if ( count($datax)>0 ) { 
 
 ?>
 <script type="text/javascript">
@@ -581,9 +612,8 @@ pointFormat: '{series.name}: {point.y}',
 	})
 });
 </script>
-
-
 <?php 
+}
 
 sqlsrv_close( $conn );
 $pageContent = ob_get_contents(); // collect above content and store in variable

@@ -132,9 +132,7 @@ if (isset($_POST['org']))  $config['config']['org_filter']=$_POST['org']; else  
  if (isset($_POST['av'])) $config['panels']['showAv']="1"; else $config['panels']['showAv']="0";
  if (isset($_POST['KAV'])) $config['panels']['showKAV']="1"; else $config['panels']['showKAV']="0";
  if (isset($_POST['SEP'])) $config['panels']['showSEP']="1"; else $config['panels']['showSEP']="0";
-// if (isset($_POST['SCAV'])) $config['panels']['showSCAV']="1"; else $config['panels']['showSCAV']="0";
  if (isset($_POST['alarm'])) $config['panels']['showAlarms']="1"; else $config['panels']['showAlarms']="0";
-// if (isset($_POST['SMART'])) $config['panels']['showSMART']="1"; else $config['panels']['showSMART']="0";
  if (isset($_POST['uptime'])) $config['panels']['showUptime']="1"; else $config['panels']['showUptime']="0";
  if (isset($_POST['patching'])) $config['panels']['showPatching']="1"; else $config['panels']['showPatching']="0";
  if (isset($_POST['lowdisk'])) $config['panels']['showLowDisk']="1"; else $config['panels']['showLowDisk']="0";
@@ -206,9 +204,7 @@ if (!isset($config['panels']['showBUDR'])) { $config['panels']['showBUDR'] = tru
 if (!isset($config['panels']['showAv'])) { $config['panels']['showAv'] = true; }
 if (!isset($config['panels']['showKAV'])) { $config['panels']['showKAV'] = true; }
 if (!isset($config['panels']['showSEP'])) { $config['panels']['showSEP'] = true; }
-//if (!isset($config['panels']['showSCAV'])) { $config['panels']['showSCAV'] = true; }
 if (!isset($config['panels']['showAlarms'])) { $config['panels']['showAlarms'] = true; }
-//if (!isset($config['panels']['showSMART'])) { $config['panels']['showSMART'] = true; }
 if (!isset($config['panels']['showUptime'])) { $config['panels']['showUptime'] = true; }
 if (!isset($config['panels']['showPatching'])) { $config['panels']['showPatching'] = true; }
 if (!isset($config['panels']['showLowDisk'])) { $config['panels']['showLowDisk'] = true; }
@@ -661,13 +657,6 @@ function toggle(className,parentState){
 </td><td>
 <?php if ($res!=null) { echo $lic_data[$res]['ref']."</td><td class=\"colM\">".$lic_data[$res]['version']; }  else { echo 'Not Installed</td><td>'; } ?>
 </td></tr>
-
-<!--<tr><td>
-<label for="SC">Security Centre Panel</label>
-<input type="checkbox" name="SCAV" class='list2' <?php if($config['panels']['showSCAV']==true){echo "checked";} ?>>
-</td><td></td><td></td></tr>
--->
-
 <tr><td>
 <label for="budr">Backup (KBU) Panels</label>
 <?php $res=null; $res=findProduct($lic_data,12);?>
@@ -675,11 +664,6 @@ function toggle(className,parentState){
 </td><td>
 <?php if ($res!=null) { echo $lic_data[$res]['ref']."</td><td class=\"colM\">".$lic_data[$res]['version']; }  else { echo 'Not Installed</td><td>'; } ?>
 </td><td></td></tr>
-
-<tr><!--<td>
-<label for="SMART">HDD SMART Panel</label>
-<input type="checkbox" name="SMART" class='list2' <?php if($config['panels']['showSMART']==true){echo "checked";} ?>>
-</td><td>--></td><td></td></tr>
 
 </table>
 </fieldset>

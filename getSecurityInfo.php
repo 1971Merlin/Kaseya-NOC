@@ -367,7 +367,7 @@ while( $row8 = sqlsrv_fetch_array( $stmt8, SQLSRV_FETCH_ASSOC))
   $datax[]= "['".$row8['virusname']."', ".$row8['count']."]";
 }
 
-if ( count($datax)>1 ) { 
+if ( count($datax)>0 ) { 
 
 ?>
 <script type="text/javascript">
@@ -466,7 +466,7 @@ while( $row9 = sqlsrv_fetch_array( $stmt9, SQLSRV_FETCH_ASSOC))
   $datax[]= "['".$row9['virusname']."', ".$row9['count']."]";
 }
 
-if ( count($datax)>1 ) { 
+if ( count($datax)>0 ) { 
 
 ?>
 <script type="text/javascript">

@@ -103,7 +103,7 @@ table {
 #core
 {
 font-size:16px;
-width:264px;
+width:268px;
 }
 
 #details
@@ -184,6 +184,8 @@ overflow-y:scroll;
  margin-bottom: 2px;
  width: 100%;
  border-bottom: 1px solid gray;
+/* hack for borders working properly!! */
+ box-sizing: border-box;
 background: rgb(255,255,255); /* Old browsers */
 /* IE9 SVG, needs conditional override of 'filter' to 'none' */
 background: -moz-linear-gradient(top,  rgba(255,255,255,1) 0%, rgba(241,241,241,1) 50%, rgba(225,225,225,1) 51%, rgba(246,246,246,1) 100%); /* FF3.6+ */
@@ -206,8 +208,6 @@ border-top: 1px solid gray;
  float:right;
  font-style: italic;
  margin-top: 5px;
- margin-right: 5px;
- padding-right: 5px;
  font-size: 10px;
  color: #0000ff;
 }
@@ -307,7 +307,6 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f5f6f6', end
  padding: 0px 2px 5px 2px;
  clear:both;
  border-bottom: 1px solid #e0e0e0;
- /*background-color:yellow;*/
  }
  
 .rssL {
@@ -565,4 +564,9 @@ width:254px;
 height:218px;
 }
 
-
+/* graphs for aV reports */
+.avGraph {
+width: 400px;
+height: 252px;
+clear:both;
+}
