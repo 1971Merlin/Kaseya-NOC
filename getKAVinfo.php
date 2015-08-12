@@ -327,7 +327,11 @@ while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC))
   echo "</td>";
  
   $offset = date('Z');
-  $dispdate = date($datestyle." ".$timestyle,$row['LastUpdated']->getTimestamp()+$offset);
+  
+  if ($row['LastUpdated'] instanceof DateTime) {
+     $dispdate = date($datestyle." ".$timestyle,$row['LastUpdated']->getTimestamp()+$offset);
+  } else { $dispdate="Never!"; }
+  
   
   $defdate  = date($datestyle." ".$timestyle,$row['BaseDate']->getTimestamp());
   
