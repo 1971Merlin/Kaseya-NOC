@@ -61,7 +61,6 @@ echo "<div class=\"topn\">showing first ".$limit."</div>";
 echo "<div style=\"float:right; margin-right:7px;\"><a href=\"getRSSFeed.php?reload\" title=\"Last refreshed ".date($datestyle." ".$timestyle,$lastrefresh)."\"><img src=\"images/refresh.png\"></a></div>";
 echo "</div>";
 
-
 	for($x=0;$x<$limit;$x++) {
 		$title = isset($feed[$x]['title']) ? str_replace(' & ', ' &amp; ', $feed[$x]['title']) : "";
 		$link = isset($feed[$x]['link']) ? $feed[$x]['link'] : "";
@@ -76,8 +75,9 @@ echo "</div>";
 			echo '</div>';
 		echo '</div>';
 	}
+
 	
 $pageContent = ob_get_contents(); // collect above content and store in variable
 ob_end_clean();
-echo $pageContent; 
+echo $pageContent;
 ?>

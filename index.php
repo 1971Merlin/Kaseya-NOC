@@ -14,9 +14,9 @@
 <script src="jcookie1.4.1/jquery.cookie.js"></script>
 
 <!-- charting libraries -->
-<script src="highcharts4.1.6/js/highcharts.js"></script>
-<script src="highcharts4.1.6/js/highcharts-3d.js"></script>
-<script src="highcharts4.1.6/js/highcharts-more.js"></script>
+<script src="highcharts4.1.7/js/highcharts.js"></script>
+<script src="highcharts4.1.7/js/highcharts-3d.js"></script>
+<script src="highcharts4.1.7/js/highcharts-more.js"></script>
 
 <!-- Jquery UI library -->
 <link rel="stylesheet" type="text/css" href="jquery-ui-1.11.4/themes/smoothness/jquery-ui.css" >

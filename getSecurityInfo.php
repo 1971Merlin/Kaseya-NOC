@@ -361,7 +361,6 @@ echo "<div class=\"minibox\" style=\"clear:both\">";
 echo "</div>";
 
 $datax = array();
-
 while( $row8 = sqlsrv_fetch_array( $stmt8, SQLSRV_FETCH_ASSOC))
 {
   $datax[]= "['".$row8['virusname']."', ".$row8['count']."]";
@@ -416,7 +415,7 @@ backgroundColor: '#f0f0f0'
 },
 plotOptions: {
 pie: {
-center: ['50%','50%'],
+center: ['50%','60%'],
 animation: false,
 depth: 25,
 dataLabels: {
@@ -424,8 +423,7 @@ distance: 15,
 enabled: true,
 format: '{point.name} : {point.y}',
 style: {
-fontSize: '9px',
-width: '120px'
+fontSize: '9px'
 },
 },
 showInLegend: true,
@@ -460,7 +458,6 @@ echo "<div class=\"minibox\">";
 echo "</div>";
 
 $datax = array();
-
 while( $row9 = sqlsrv_fetch_array( $stmt9, SQLSRV_FETCH_ASSOC))
 {
   $datax[]= "['".$row9['virusname']."', ".$row9['count']."]";
@@ -515,7 +512,7 @@ backgroundColor: '#f0f0f0'
 },
 plotOptions: {
 pie: {
-center: ['50%','65%'],
+center: ['50%','60%'],
 animation: false,
 depth: 25,
 dataLabels: {
@@ -523,8 +520,7 @@ distance: 15,
 enabled: true,
 format: '{point.name} : {point.y}',
 style: {
-fontSize: '9px',
-width: '120px'
+fontSize: '9px'
 },
 },
 showInLegend: true,
@@ -543,10 +539,8 @@ pointFormat: '{series.name}: {point.y}',
 	})
 });
 </script>
-
 <?php 
 }
-
 sqlsrv_close( $conn );
 $pageContent = ob_get_contents(); // collect above content and store in variable
 ob_end_clean();

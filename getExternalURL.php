@@ -3,7 +3,7 @@ $pageContent = null;
 ob_start();
 include 'dblogin.php';
 
-echo "<div class=\"heading\">External URL<div style=\"float:right; margin-right:7px;\"><a href=\"".$exturl."\" target=\"blank\"><img src=\"images/link.png\" style=\"vertical-align:middle\"></a></div></div>";		
+echo "<div class=\"heading\">External URL<div style=\"float:right\"><a href=\"".$exturl."\" target=\"blank\"><img src=\"images/link.png\" style=\"vertical-align:middle\"></a></div></div>";		
 
 
 echo "<div id=\"extDIV\">";

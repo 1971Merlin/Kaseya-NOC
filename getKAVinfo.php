@@ -77,7 +77,7 @@ if ($usescopefilter==true) { $tsql7.=" join vdb_Scopes_Machines foo on (foo.agen
 if ($org_filter!="Master") { $tsql7.=" 
  join dbo.DenormalizedOrgToMach on kav.agentGuid = dbo.DenormalizedOrgToMach.AgentGuid
   and dbo.DenormalizedOrgToMach.OrgId = (select id from kasadmin.org where kasadmin.org.ref = '".$org_filter."')"; }
-  $tsql7.=" where Status in (0,1,2,6)
+  $tsql7.=" where Status in (0,1,6)
   group by name
   order by count desc";
  
@@ -97,7 +97,7 @@ if ($org_filter!="Master") { $tsql7.="
 12 = RemediatedByUser
 */
 
- 
+
 // top resolved threats count for graph
   
  $tsql8 = "select top 5 count (name) as count, name
@@ -460,7 +460,6 @@ enabled: false
 	});	
 
 if (chartKAVTHREAT) chartKAVTHREAT.destroy();
-
 chartSVR = new Highcharts.Chart({
 
 chart: {
@@ -491,16 +490,15 @@ backgroundColor: '#f0f0f0'
 },
 plotOptions: {
 pie: {
-center: ['50%','65%'],
+center: ['50%','60%'],
 animation: false,
 depth: 25,
 dataLabels: {
 distance: 15,
-enabled: true,
+enabled: false,
 format: '{point.name} : {point.y}',
 style: {
-fontSize: '9px',
-width: '120px'
+fontSize: '9px'
 },
 },
 showInLegend: true,
@@ -557,7 +555,6 @@ enabled: false
 	});	
 
 if (chartKAVRESOLVED) chartKAVRESOLVED.destroy();
-
 chartSVR = new Highcharts.Chart({
 
 chart: {
@@ -588,7 +585,7 @@ backgroundColor: '#f0f0f0'
 },
 plotOptions: {
 pie: {
-center: ['50%','65%'],
+center: ['50%','60%'],
 animation: false,
 depth: 25,
 dataLabels: {
@@ -596,8 +593,7 @@ distance: 15,
 enabled: true,
 format: '{point.name} : {point.y}',
 style: {
-fontSize: '9px',
-width: '120px'
+fontSize: '9px'
 },
 },
 showInLegend: true,
@@ -618,7 +614,6 @@ pointFormat: '{series.name}: {point.y}',
 </script>
 <?php 
 }
-
 sqlsrv_close( $conn );
 $pageContent = ob_get_contents(); // collect above content and store in variable
 ob_end_clean();

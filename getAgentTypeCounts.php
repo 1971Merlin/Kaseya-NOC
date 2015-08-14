@@ -27,9 +27,9 @@ if ($org_filter!="Master") { $tsql2.="
 <div id="agentdialog"></div>
 <script type="text/javascript">
 $(document).ready(function() {
-//$( "#agentdialog" ).dialog({ autoOpen: false, dialogClass: "no-close" });
-$( "#agentdialog" ).dialog({ autoOpen: false, modal: true });
-$( "#agentcnts td:first-child, #agentWScnts td:first-child" ).click(function() { 
+$( "#agentdialog" ).dialog({ autoOpen: false, dialogClass: "no-close" });
+//$( "#agentdialog" ).dialog({ autoOpen: false, modal: true });
+$( "#agentcnts td:first-child, #agentWScnts td:first-child" ).mouseover(function() { 
 	$( "#agentdialog" ).dialog("option", "title", $(this).text());
 	$.ajax({
 		'type':'GET',
@@ -39,20 +39,19 @@ $( "#agentcnts td:first-child, #agentWScnts td:first-child" ).click(function() {
 			$("#agentdialog").html(data);
 		}
 		});
-		$("#agentdialog").dialog( "option" ,"position", { collision: "flipfit", within: "#row2" } );
+//		$("#agentdialog").dialog( "option" ,"position", { collision: "flipfit", within: "#row2" } );
 		$("#agentdialog").dialog("option", "minHeight", 50);
 		$("#agentdialog").dialog("option", "maxHeight", 350);
-		$("#agentdialog").dialog( "moveToTop" );
-		$("#agentdialog").css('overflow', 'auto');
-//		$("#agentdialog").dialog("option", "width", 500);
+//		$("#agentdialog").dialog( "moveToTop" );
+		$("#agentdialog").css('overflow', 'none');
+		$("#agentdialog").dialog("option", "width", 'auto');
 		$("#agentdialog").dialog( "open" );
 		$("#agentdialog").dialog( "option" ,"position", { my: "left top", at: "right middle", of: $(this), collision: "fit" } );
-	});
+//	});
 	
-//	.mouseout(function() {
-//	$( "#agentdialog" ).dialog( "close" );
-//});
-
+	}).mouseout(function() {
+	$( "#agentdialog" ).dialog( "close" );
+	});
 });
 </script>
 <?php
