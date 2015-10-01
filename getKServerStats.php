@@ -18,6 +18,8 @@ $tsql6 = "IF EXISTS (SELECT 1 FROM dbo.tempData WHERE tempName = 'KaseyaPatchLev
 		 SELECT TOP 1 ISNULL(tempValue, 'None') AS PatchLevel FROM tempData WHERE tempName = 'KaseyaPatchLevel' ORDER BY creationDate DESC
 			ELSE SELECT 'Unknown' AS PatchLevel";
 
+$tsql7 = "select ref, Value from vdb_licenseValues where ref='Maxagents' or ref='Expiration'";
+
 			
 $stmt = sqlsrv_query( $conn, $tsql);
 if( $stmt === false ) {
@@ -55,6 +57,11 @@ if( $stmt6 === false ) {
      die( print_r( sqlsrv_errors(), true));
 }
 
+$stmt7 = sqlsrv_query( $conn, $tsql7);
+if( $stmt7 === false ) {
+     echo "Error in executing query.<br/>";
+     die( print_r( sqlsrv_errors(), true));
+}
 
 echo "<table id=\"uptimelist\" class=\"datatable\">";
 
@@ -67,7 +74,8 @@ echo "<tr><th class=\"colL\">Site code</th><th class=\"colL\">CPU Use 5min</th><
 
 if ($KVer>6.3) echo "<th class=\"colL\">Patch Level</th>"; else echo "<th class=\"colL\">Latest Hotfix</th>";
 if ($KVer>6.5) echo "<th class=\"colL\">Latest Patch</th>";
-
+echo "<th class=\"colL\">Max Agents</th>";
+echo "<th class=\"colL\">License Expires</th>";
 echo "</tr>";
 
 /* 6.5 has a new way to get the hotfix version number */
@@ -108,7 +116,25 @@ if ($KVer>6.5) {
   if (trim($row6['PatchLevel']) != trim($kpatch)) $col='red';
   echo "<td class=\"colM\"><font color=\"".$col."\">".$row6['PatchLevel']."</font></td>";
 }
- echo "</tr>";
+
+$lic=array();
+while( $row7 = sqlsrv_fetch_array( $stmt7, SQLSRV_FETCH_ASSOC))
+{
+	$lic[$row7['ref']] = $row7['Value'];
+}
+
+echo "<td class=\"colM\">".$lic['MaxAgents']."</td>";
+$exp = new datetime($lic['Expiration']);
+$now = new datetime();
+
+$diff = ($now->diff($exp)->format("%a"))+1;
+
+ $col='black';
+  if ($diff<=14) $col='red';
+  echo "<td class=\"colM\"><font color=\"".$col."\">".$exp->format($datestyle)."</font></td>";
+
+
+echo "</tr>";
 echo "</table>";
 
 sqlsrv_close( $conn );
