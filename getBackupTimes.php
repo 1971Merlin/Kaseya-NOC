@@ -34,7 +34,7 @@ while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC))
 }
 
 
-if ( count($datax)>1 ) { 
+if ( count($datax)>0 ) { 
 	
 
 $hght=count($datax)*15+160;
@@ -161,10 +161,10 @@ foreach ($datax as $item) {
   $firstin = false;
 
   echo "[";  
-  echo $item['EventTime']->getTimestamp()."000";
-  echo ",";
-  $length=$item['EventTime']->getTimestamp()+$item['durationSec'];
+  $length=$item['EventTime']->getTimestamp()-$item['durationSec'];
   echo $length."000";
+  echo ",";
+  echo $item['EventTime']->getTimestamp()."000";
   echo "]";
 }  
 ?>]
@@ -173,6 +173,7 @@ foreach ($datax as $item) {
 });
 </script>
 <?php
+
 }
 sqlsrv_close( $conn );
 $pageContent = ob_get_contents(); // collect above content and store in variable
