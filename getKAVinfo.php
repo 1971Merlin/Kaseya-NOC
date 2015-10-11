@@ -518,6 +518,12 @@ pointFormat: '{series.name}: {point.y}',
 });
 </script>
 <?php
+} else {
+?>	
+	<script type="text/javascript">
+	$('#kavThreats').html('<p class="AVmsg">No Active Threats Detected</p>');
+	</script>
+<?php
 }
 
 
@@ -613,6 +619,12 @@ pointFormat: '{series.name}: {point.y}',
 });
 </script>
 <?php 
+} else {
+?>	
+	<script type="text/javascript">
+	$('#kavResolved').html('<p class="AVmsg">No Resolved Threats Detected</p>');
+	</script>
+<?php
 }
 sqlsrv_close( $conn );
 $pageContent = ob_get_contents(); // collect above content and store in variable

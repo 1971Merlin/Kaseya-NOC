@@ -445,6 +445,12 @@ pointFormat: '{series.name}: {point.y}',
 
 
 <?php 
+} else {
+?>	
+	<script type="text/javascript">
+	$('#activeThreats').html('<p class="AVmsg">No Active Threats Detected</p>');
+	</script>
+<?php
 }
 
 
@@ -540,6 +546,12 @@ pointFormat: '{series.name}: {point.y}',
 });
 </script>
 <?php 
+} else {
+?>	
+	<script type="text/javascript">
+	$('#vaultThreats').html('<p class="AVmsg">No Vault Threats Detected</p>');
+	</script>
+<?php
 }
 sqlsrv_close( $conn );
 $pageContent = ob_get_contents(); // collect above content and store in variable
