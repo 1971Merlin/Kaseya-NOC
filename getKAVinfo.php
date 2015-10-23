@@ -57,7 +57,21 @@ if ($org_filter!="Master") { $tsql5a.="
  join dbo.DenormalizedOrgToMach on kav.agentid = dbo.DenormalizedOrgToMach.AgentGuid
   and dbo.DenormalizedOrgToMach.OrgId = (select id from kasadmin.org where kasadmin.org.ref = '".$org_filter."')"; }
   $tsql5a.=" where kav.isCompleted = 1";
+  
+  
+// failed installs  
+$tsql5b = "select count(kav.agentId) as num from kav.AVInstallProgressState kav";
+if ($usescopefilter==true) { $tsql5b.=" join vdb_Scopes_Machines foo on (foo.agentGuid = kav.agentid and foo.scope_ref = '".$scope_filter."')"; }
+if ($org_filter!="Master") { $tsql5b.=" 
+ join dbo.DenormalizedOrgToMach on kav.agentid = dbo.DenormalizedOrgToMach.AgentGuid
+  and dbo.DenormalizedOrgToMach.OrgId = (select id from kasadmin.org where kasadmin.org.ref = '".$org_filter."')"; }
+  $tsql5b.=" inner join (select AgentId, MAX(Started) as started
+  from kav.AVInstallProgressState
+  group by AgentId) toprecord
+  on toprecord.started = kav.Started
+  where Phase <> 1";
 
+  
 // infected machines count
   
  $tsql6 = "select count (distinct  MachineID) as count
@@ -173,6 +187,13 @@ if( $stmt5a === false )
   die( print_r( sqlsrv_errors(), true));
 }
 
+$stmt5b = sqlsrv_query( $conn, $tsql5b);
+if( $stmt5b === false )
+{
+  echo "Error in executing query.<br/>";
+  die( print_r( sqlsrv_errors(), true));
+}
+
 $stmt6 = sqlsrv_query( $conn, $tsql6);
 if( $stmt6 === false )
 {
@@ -208,19 +229,13 @@ if( $stmt10 === false )
   die( print_r( sqlsrv_errors(), true));
 }
 
-
 $row2 = sqlsrv_fetch_array( $stmt2, SQLSRV_FETCH_ASSOC);
-
 $row3 = sqlsrv_fetch_array( $stmt3, SQLSRV_FETCH_ASSOC);
-
 $row5a = sqlsrv_fetch_array( $stmt5a, SQLSRV_FETCH_ASSOC);
-
+$row5b = sqlsrv_fetch_array( $stmt5b, SQLSRV_FETCH_ASSOC);
 $row6 = sqlsrv_fetch_array( $stmt6, SQLSRV_FETCH_ASSOC);
-
 $row9 = sqlsrv_fetch_array( $stmt9, SQLSRV_FETCH_ASSOC);
-
 $row10 = sqlsrv_fetch_array( $stmt10, SQLSRV_FETCH_ASSOC);
-
 
 echo "<div class=\"heading\">";
 echo "<image src=\"images/kav-logo.png\" style=\"vertical-align:middle\"> Anti-Virus (KAV) Server Status";
@@ -260,16 +275,27 @@ echo "<div class=\"topn\">showing first ".$resultcount."</div>";
 echo "</div>";
 
 
-
+$okinstalls = $row5a['num'];
+$failedinstalls = $row5b['num'];
+$okinstalls = $okinstalls - $failedinstalls;
 
 // installs
   echo "<div class=\"minibox\">";
   echo "<div class=\"miniheading\">Installations</div>";
   echo "<div class=\"mininum\">";
-  echo "<font color=\"blue\">".$row5a['num']."</font>";
+  echo "<font color=\"blue\">".$okinstalls."</font>";
   echo "</div>";
   echo "</div>";
 
+// failed installs
+  echo "<div class=\"minibox\">";
+  echo "<div class=\"miniheading\">Failed Installs</div>";
+  echo "<div class=\"mininum\">";
+  $color="green";
+  if ($failedinstalls > 0) { $color="red"; }
+  echo "<font color=\"".$color."\">".$failedinstalls."</font>";
+  echo "</div>";
+  echo "</div>";
 
 // infected machines
   echo "<div class=\"minibox\">";
