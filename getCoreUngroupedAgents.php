@@ -11,38 +11,22 @@ if ($id=='l') { $right=false; }
 if ($id=='r') { $left=false; }
 
 
-$tsql = "select top ".$resultcount." Machine from (
-  SELECT distinct Machine_GroupID as Machine
+$tsql = "select distinct top ".$resultcount." Machine_GroupID as Machine
   FROM vMachine";
 if ($usescopefilter==true) { $tsql.=" join vdb_Scopes_Machines foo on (foo.agentGuid = vMachine.agentGuid and foo.scope_ref = '".$scope_filter."')"; }
 if ($org_filter!="Master") { $tsql.=" 
  join dbo.DenormalizedOrgToMach on vMachine.agentGuid = dbo.DenormalizedOrgToMach.AgentGuid
   and dbo.DenormalizedOrgToMach.OrgId = (select id from kasadmin.org where kasadmin.org.ref = '".$org_filter."')"; }
- $tsql.=" Where vMachine.groupName like 'root%'
-
-  union
-  
-  SELECT distinct Machine_GroupID as Machine
-  FROM vMachine
-  Where vMachine.groupName like 'root.unnamed'
-)  foo1";
+ $tsql.=" Where vMachine.groupName like 'root.%' and vMachine.groupName <> 'root.kserver'";
 
 
-$tsql2 = "select sum(num) as num from (
-  SELECT COUNT(distinct vMachine.agentGuid) as num
+$tsql2 = "SELECT COUNT(distinct vMachine.agentGuid) as num
   FROM vMachine";
 if ($usescopefilter==true) { $tsql2.=" join vdb_Scopes_Machines foo on (foo.agentGuid = vMachine.agentGuid and foo.scope_ref = '".$scope_filter."')"; }
 if ($org_filter!="Master") { $tsql2.=" 
  join dbo.DenormalizedOrgToMach on vMachine.agentGuid = dbo.DenormalizedOrgToMach.AgentGuid
   and dbo.DenormalizedOrgToMach.OrgId = (select id from kasadmin.org where kasadmin.org.ref = '".$org_filter."')"; }
- $tsql2.=" Where vMachine.groupName like 'root%'
-
-  union all SELECT count(distinct vMachine.agentGuid) as num
-  FROM vMachine
-  Where vMachine.groupName like 'root.unnamed'
-
-) foo2";
-
+ $tsql2.=" Where vMachine.groupName like 'root.%' and vMachine.groupName <> 'root.kserver'";
 
 $stmt2 = sqlsrv_query( $conn, $tsql2);
 if( $stmt2 === false )
