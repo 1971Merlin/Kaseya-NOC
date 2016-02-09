@@ -107,7 +107,7 @@ if ($KVer > 7 ) {
   echo "<div class=\"datatable\">";
 
   echo "<table id=\"rcinfolist\">";
-  echo "<tr><th class=\"colL\">Admin Name</th><th>Active</th><th class=\"colL\">Machine Name</th><th class=\"colL\">Start Time</th><th class=\"colL\">Duration</th><th class=\"colL\">Type</th></tr>";
+  echo "<tr><th class=\"colL\">Admin Name</th><th>Active</th><th class=\"colL\">Machine Name</th><th class=\"colL\">Start Time</th><th class=\"colL\">Duration</th><th class=\"colM\">Type</th></tr>";
 
   foreach ($rc as $value) {
  

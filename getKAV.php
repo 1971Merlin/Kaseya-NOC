@@ -55,7 +55,17 @@ if ($org_filter!="Master") { $tsql10.="
   and dbo.DenormalizedOrgToMach.OrgId = (select id from kasadmin.org where kasadmin.org.ref = '".$org_filter."')"; }
   $tsql10.=" where BaseDate < DATEADD(day,-14,getutcdate())";
 
+// outdated program version
 
+$tsql11 = "select count (distinct kav.agentguid) as count
+  from kav.kasperskyFeature as kav";  
+if ($usescopefilter==true) { $tsql11.=" join vdb_Scopes_Machines foo on (foo.agentGuid = kav.agentGuid and foo.scope_ref = '".$scope_filter."')"; }
+if ($org_filter!="Master") { $tsql11.=" 
+ join dbo.DenormalizedOrgToMach on kav.agentGuid = dbo.DenormalizedOrgToMach.AgentGuid
+  and dbo.DenormalizedOrgToMach.OrgId = (select id from kasadmin.org where kasadmin.org.ref = '".$org_filter."')"; }
+  $tsql11.=" where IsInstalled = 1 and ClientVersion not like ( select availableversion from SecurityCenter.InstallerVersion where installername like '%Kaspersky%' )";
+  
+  
 $stmt5a = sqlsrv_query( $conn, $tsql5a);
 if( $stmt5a === false )
 {
@@ -91,11 +101,19 @@ if( $stmt10 === false )
   die( print_r( sqlsrv_errors(), true));
 }
 
+$stmt11 = sqlsrv_query( $conn, $tsql11);
+if( $stmt11 === false )
+{
+  echo "Error in executing query.<br/>";
+  die( print_r( sqlsrv_errors(), true));
+}
+
 $row5a = sqlsrv_fetch_array( $stmt5a, SQLSRV_FETCH_ASSOC);
 $row5b = sqlsrv_fetch_array( $stmt5b, SQLSRV_FETCH_ASSOC);
 $row6 = sqlsrv_fetch_array( $stmt6, SQLSRV_FETCH_ASSOC);
 $row9 = sqlsrv_fetch_array( $stmt9, SQLSRV_FETCH_ASSOC);
 $row10 = sqlsrv_fetch_array( $stmt10, SQLSRV_FETCH_ASSOC);
+$row11 = sqlsrv_fetch_array( $stmt11, SQLSRV_FETCH_ASSOC);
 
 echo "<div class=\"heading\">";
 echo "<image src=\"images/kav-logo.png\" style=\"vertical-align:middle\"> Anti-Virus (KAV) Server Status";
@@ -156,6 +174,16 @@ $okinstalls = $okinstalls - $failedinstalls;
   echo "</div>";
   echo "</div>";
 
+  
+// Out of date program
+  echo "<div class=\"minibox\">";
+  echo "<div class=\"miniheading\">Old AppVer</div>";
+  echo "<div class=\"mininum\">";
+  $color="blue";
+  if ($row11['count'] > 0) { $color="orange"; }
+  echo "<font color =\"".$color."\">".$row11['count']."</font>";
+  echo "</div>";
+  echo "</div>";
  
 sqlsrv_close( $conn );
 $pageContent = ob_get_contents(); // collect above content and store in variable

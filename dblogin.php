@@ -109,6 +109,7 @@ if (!isset($config['strip']['showPolicy'])) { $config['strip']['showPolicy'] = f
 if (!isset($config['strip']['showEXT'])) { $config['strip']['showEXT'] = true; }
 if (!isset($config['strip']['showRSS'])) { $config['strip']['showRSS'] = true; }
 if (!isset($config['strip']['showLastCheckin'])) { $config['strip']['showLastCheckin'] = false; }
+if (!isset($config['strip']['showScripts'])) { $config['strip']['showScripts'] = true; }
 if (!isset($config['strip']['extURL'])) { $config['strip']['extURL'] = null; }
 if (!isset($config['strip']['rssURL'])) { $config['strip']['rssURL'] = null; }
 

@@ -27,6 +27,10 @@ if (file_exists($cache_file) && $timedif < $cache_time && !isset($_GET['reload']
     }
 }
 
+
+if(!isset($_GET['reload'])) {
+
+
 $lastrefresh = filemtime($cache_file);
 	
 
@@ -36,9 +40,6 @@ $lastrefresh = filemtime($cache_file);
 		$title = isset($node->getElementsByTagName('title')->item(0)->nodeValue) ? $node->getElementsByTagName('title')->item(0)->nodeValue : "";
 	}
 	
-	
-	
-
 	$feed = array();
 	foreach ($rss->getElementsByTagName('item') as $node) {
 		$item=array();
@@ -46,7 +47,13 @@ $lastrefresh = filemtime($cache_file);
 		if (isset($node->getElementsByTagName('title')->item(0)->nodeValue)) { $item['title'] = $node->getElementsByTagName('title')->item(0)->nodeValue; }
 		if (isset($node->getElementsByTagName('description')->item(0)->nodeValue)) { $item['desc'] = $node->getElementsByTagName('description')->item(0)->nodeValue; }
 		if (isset($node->getElementsByTagName('link')->item(0)->nodeValue)) { $item['link'] = $node->getElementsByTagName('link')->item(0)->nodeValue; }
-		if (isset($node->getElementsByTagName('pubDate')->item(0)->nodeValue)) { $item['date'] = $node->getElementsByTagName('pubDate')->item(0)->nodeValue; }
+		if (isset($node->getElementsByTagName('pubDate')->item(0)->nodeValue)) { $item['date'] = $node->getElementsByTagName('pubDate')->item(0)->nodeValue;
+		
+		$datn = strtotime($node->getElementsByTagName('pubDate')->item(0)->nodeValue);
+		
+		$item['datn'] = $datn;
+		
+		}
 		
 		array_push($feed, $item);
 	}
@@ -58,8 +65,23 @@ $lastrefresh = filemtime($cache_file);
 
 echo "<div class=\"heading\">RSS Feed : ".$title;
 echo "<div class=\"topn\">showing first ".$limit."</div>";
-echo "<div style=\"float:right; margin-right:7px;\"><a href=\"getRSSFeed.php?reload\" title=\"Last refreshed ".date($datestyle." ".$timestyle,$lastrefresh)."\"><img src=\"images/refresh.png\"></a></div>";
+echo "<div style=\"float:right; margin-right:7px;\"><a href=\"getRSSFeed.php?reload=1\" title=\"Last refreshed ".date($datestyle." ".$timestyle,$lastrefresh)."\"><img src=\"images/refresh.png\"></a></div>";
 echo "</div>";
+
+
+foreach ($feed as $key => $row) {
+    $dsort[$key]  = $row['datn'];
+}
+
+// Sort the data in descending date order
+
+array_multisort($dsort, SORT_DESC, $feed);
+
+
+// print_r('<pre>');
+// print_r($feed);
+// die();
+
 
 	for($x=0;$x<$limit;$x++) {
 		$title = isset($feed[$x]['title']) ? str_replace(' & ', ' &amp; ', $feed[$x]['title']) : "";
@@ -80,4 +102,5 @@ echo "</div>";
 $pageContent = ob_get_contents(); // collect above content and store in variable
 ob_end_clean();
 echo $pageContent;
+} else { echo "<script>history.go(-1);</script>"; };
 ?>

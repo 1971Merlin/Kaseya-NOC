@@ -47,7 +47,7 @@
 	$( "#showEXT" ).resizable();
 	
 	$( "#row1 > .panel" ).draggable({ containment: "#row1", scroll: true }, { stack: "#row1 > .panel" });
-	$( "#row2 div" ).draggable({ containment: "#row2", scroll: true }, { stack: "#row2 div" });
+	$( "#row2 > .panel" ).draggable({ containment: "#row2", scroll: true }, { stack: "#row2 > .panel" });
 
 	
   // if position saved in a cookie, then position the panel
@@ -198,6 +198,7 @@
 <?php if ($config['strip']['showPendApprove'] == true) { echo "<div id=\"pendingScripts\" class=\"pointer\"></div>"; } ?>
 <?php if ($config['strip']['showLastCheckin'] == true) { echo "<div id=\"lastCheckedIn\" class=\"pointer\"></div>"; } ?>
 <?php if ($config['strip']['showMobile'] == true) { echo "<div id=\"mobileIssues\" class=\"pointer\"></div>"; } ?>
+<?php if ($config['strip']['showScripts'] == true) { echo "<div id=\"activeScripts\" class=\"pointer\"></div>"; } ?>
 	</div> 
 </div>
 
@@ -264,6 +265,8 @@ if ($config['strip']['showOldAgents'] == true) { $paneldivs[]="#outdatedAgents";
 if ($config['strip']['showPendApprove'] == true) { $paneldivs[]="#pendingScripts"; $panelphps[]="getCorePendingScriptApprovals"; }
 if ($config['strip']['showLastCheckin'] == true) { $paneldivs[]="#lastCheckedIn"; $panelphps[]="getCoreLastCheckedIn"; }
 if ($config['strip']['showMobile'] == true) { $paneldivs[]="#mobileIssues"; $panelphps[]="getCoreMobileIssues"; }
+if ($config['strip']['showScripts'] == true) { $paneldivs[]="#activeScripts"; $panelphps[]="getCoreActiveScripts"; }
+
 
 
 echo "var paneldivs = [";

@@ -7,9 +7,9 @@ echo "<div class=\"heading\">Remote Control History Last 24Hrs</div>";
 
 
  // Classic RC // 
-$tsql = "select adminname, (SUM(duration) / (1000*60)) as total, count(adminName) as num from rcLog 
+$tsql = "select adminname, (SUM(duration) / (1000*60)) as total, count(adminName) as num, type from rcLog 
 		 where eventTime > DATEADD(day,-1,getutcdate()) and duration>0 and rclog.agentGuid != 123456789
-		 group by adminname";
+		 group by adminname, type";
 
 
  // VSA 7.0 only //		 
@@ -25,10 +25,10 @@ $tsql2 = "select count (adminName) as count, adminName, (
 
   
  // VSA R8+ //
- $tsql3 = "select adminname, sum(datediff(mi,startTime,lastActiveTime)) as total, count(adminName) as num
+ $tsql3 = "select adminname, sum(datediff(mi,startTime,lastActiveTime)) as total, count(adminName) as num, sessionType as type
    from KaseyaRemoteControl.Log
    where startTime > DATEADD(day,-1,getdate()) and datediff(mi,startTime,lastActiveTime) > 0
-   group by adminname";
+   group by adminname, sessionType";
 
 //* table - version 7.0 only *// 
 
@@ -73,10 +73,24 @@ if( $stmt === false )
 
 while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC))
 {
- if ($row['total']>0) { $datax[] = "{name : '".$row['adminname']."', user : '".$row['adminname']."', y : ".$row['total'].", cl : ".$row['num']."}"; }
+ if ($row['total']>0) {
+	 
+	   $type=$row['type'];
+	   	   
+		if ($type==101) { $rctype="FTP"; } else
+		if ($type==201) { $rctype="VNC"; } else
+		if ($type==202) { $rctype="RAdmin"; } else
+		if ($type==203) { $rctype="RDP"; } else
+		if ($type==204) { $rctype="PC Anywhere"; } else
+		if ($type==205) { $rctype="K-VNC"; } else
+		if ($type==206) { $rctype="KRC(beta?)"; } else
+		$rctype="Unknown ID=".$type;	 
+	 
+	 $datax[] = "{name : '".$row['adminname']."', user : '".$row['adminname']."', y : ".$row['total'].", rct : '".$rctype."'}"; 
+	 }
 }
 
-// gert R8 sessions info //
+// get R8 sessions info //
 
 if ($KVer > 7.0 ) {
 
@@ -89,7 +103,15 @@ if ($KVer > 7.0 ) {
 
   while( $row = sqlsrv_fetch_array( $stmt3, SQLSRV_FETCH_ASSOC))
   {
-   if ($row['total']>0) { $datax[] = "{name : '".$row['adminname']."', user : '".$row['adminname']."', y : ".$row['total'].", krc : ".$row['num']."}"; }
+   if ($row['total']>0) {
+	   
+	   $type=$row['type'];
+	   
+		if ($type==1) { $rctype="cKRC"; } else
+		if ($type==2) { $rctype="pKRC"; } else
+		$rctype="Unknown ID=".$type;
+		
+		$datax[] = "{name : '".$row['adminname']."', user : '".$row['adminname']."', y : ".$row['total'].", krc : ".$row['num'].", rct : '".$rctype."'}"; }
   }
 }
 
@@ -126,9 +148,10 @@ chartRC = new Highcharts.Chart({
                 alpha: 45,
                 beta: 0,
             },
-            height: 180,
-			width: 265,	
+            height: 216,
+			width: 290,	
 			margin: [0, 0, 0, 60],
+			spacing: [0, 3, 3, 2]
         },
 		
 		tooltip: { enabled: false },
@@ -137,17 +160,23 @@ chartRC = new Highcharts.Chart({
 			align: 'left',
             verticalAlign: 'top',
 			layout: 'vertical',
-			labelFormat: '{name} ({y} mins)',
-			symbolHeight: 9,
-		    itemStyle: { fontSize : '9px' },
+//			labelFormat: '{name} ({rct}) ({y} mins)',
+			useHTML: true,
+		    itemStyle: { fontSize : '8px', lineHeight : '10px' },
 			margin: 0,
-            borderWidth: 1,
+			borderWidth: 1,
 			borderRadius: 3,
-			backgroundColor: '#f0f0f0'
+			padding: 6,
+			backgroundColor: '#f0f0f0',
+			labelFormatter: function() {
+				return '<div style="width:130px;"><span style="float:left; width:65px; overflow:hidden">' + this.name + '</span><span style="float:left">' + this.rct + '</span><span style="float:right">' + this.y + ' mins</span></div>';
+			}
+
         },
 
 		plotOptions: {
 			pie: {
+			size: 200,	// this makes a fixed pie size
 				animation: false,
 				depth: 25,
 				dataLabels: {
@@ -158,7 +187,8 @@ chartRC = new Highcharts.Chart({
 					borderColor: 'gray',
 					borderWidth: 1,
 					borderRadius: 3,
-                    format: '{point.name}<br/>{point.y} mins',
+					padding: 3,
+                    format: '{point.name}',
 					style: {
 						fontSize: '9px'
 					},

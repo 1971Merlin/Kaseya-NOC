@@ -100,7 +100,7 @@ while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC))
     echo $row['rebootPending']."</td>";
   }
   
-  $dispdate = date($datestyle." ".$timestyle,$row['lastPatchScan']->getTimestamp());
+  $dispdate = (isset($row['lastPatchScan']) ? date($datestyle." ".$timestyle,$row['lastPatchScan']->getTimestamp()) : 'Never');
   echo "<td class=\"colM\">".$dispdate."</td>";
   
   echo "<td class=\"colM\">";
@@ -191,7 +191,7 @@ while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC))
     echo $row['rebootPending']."</td>";
   }
   
-  $dispdate = date($datestyle." ".$timestyle,$row['lastPatchScan']->getTimestamp());
+  $dispdate = (isset($row['lastPatchScan']) ? date($datestyle." ".$timestyle,$row['lastPatchScan']->getTimestamp()) : 'Never');
   echo "<td class=\"colM\">".$dispdate."</td>";
   
   echo "<td class=\"colM\">";

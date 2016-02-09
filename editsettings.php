@@ -109,7 +109,8 @@ if (isset($_POST['org']))  $config['config']['org_filter']=$_POST['org']; else  
  if (isset($_POST['budrstats'])) $config['strip']['showBUDR']="1"; else $config['strip']['showBUDR']="0";
  if (isset($_POST['polstats'])) $config['strip']['showPolicy']="1"; else $config['strip']['showPolicy']="0";
  if (isset($_POST['checkin'])) $config['strip']['showLastCheckin']="1"; else $config['strip']['showLastCheckin']="0";
-
+ if (isset($_POST['scripts'])) $config['strip']['showScripts']="1"; else $config['strip']['showScripts']="0";
+ 
  
 
  
@@ -191,6 +192,7 @@ if (!isset($config['strip']['showRSS'])) { $config['strip']['showRSS'] = true; }
 if (!isset($config['strip']['showLastCheckin'])) { $config['strip']['showLastCheckin'] = true; }
 if (!isset($config['strip']['extURL'])) { $config['strip']['extURL'] = ""; }
 if (!isset($config['strip']['rssURL'])) { $config['strip']['rssURL'] = ""; }
+if (!isset($config['strip']['showScripts'])) { $config['strip']['showScripts'] = true; }
 
 
 
@@ -511,8 +513,11 @@ function toggle(className,parentState){
 </td><td>
 <label for="checkin">Agents Not Checking-in</label>
 <input type="checkbox" name="checkin" class="list3" <?php if($config['strip']['showLastCheckin']==true){echo "checked";} ?>>
-</td>
-</tr>
+</td></tr>
+<tr><td>
+<label for="scripts">Running Scripts</label>
+<input type="checkbox" name="scripts" class="list3" <?php if($config['strip']['showScripts']==true){echo "checked";} ?>>
+</td></tr>
 </table>
 </fieldset>
 
