@@ -22,7 +22,7 @@ if ($org_filter!="Master") { $tsql5b.="
   from kav.AVInstallProgressState
   group by AgentId) toprecord
   on toprecord.started = kav.Started
-  where Phase <> 1";
+  where Phase <> 1 and isCompleted = 1";
 
 // infected machines count
   

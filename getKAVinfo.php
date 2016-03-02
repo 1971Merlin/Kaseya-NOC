@@ -17,7 +17,7 @@ if ($org_filter!="Master") { $tsql.="
   $tsql.=" join vAgentLabel st on st.agentGuid = kav.agentGuid 
   join kav.KasperskyProfile ON kav.AppliedProfileId = kav.KasperskyProfile.Id
   
-  where RebootNeeded=1 or HasActiveThreats=1 or BaseDate < DATEADD(day,-14,getutcdate()) or ClientVersion not like ( select availableversion from SecurityCenter.InstallerVersion where installername like '%Kaspersky%' )
+  where st.online> 0 and (RebootNeeded=1 or HasActiveThreats=1 or BaseDate < DATEADD(day,-14,getutcdate()) or ClientVersion not like ( select availableversion from SecurityCenter.InstallerVersion where installername like '%Kaspersky%') )
   
   order by HasActiveThreats DESC, RebootNeeded DESC, BaseDate, LastUpdated, ClientVersion";
 
@@ -69,7 +69,7 @@ if ($org_filter!="Master") { $tsql5b.="
   from kav.AVInstallProgressState
   group by AgentId) toprecord
   on toprecord.started = kav.Started
-  where Phase <> 1";
+  where Phase <> 1 and isCompleted = 1";
 
   
 // infected machines count
@@ -279,6 +279,8 @@ echo $row2['svrlicpurch']-$row2['svrlic']-$row2['svrlicexp']." available Server 
 echo $row2['wslicpurch']-$row2['wslic']-$row2['wslicexp']." available Workstation Licenses</br>";
 echo "AV Engine ".$row3['installername'].": Current Version ".$row3['version'].". Available Version ".$row3['availableversion']."</br>";
 
+$curver = $row3['version'];
+
 echo "</div>";
 
 //* spacer *//
@@ -391,8 +393,12 @@ while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC))
   if ($row['OldDefs']==1) { $colr='red'; } else $colr='black';
   echo "<td class=\"colL\"><font color=\"".$colr."\">".$defdate."</font></td>";
 
-  echo "<td class=\"colL\">".$row['ClientVersion']."</td>";
+  
+  if ($row['ClientVersion']!=$curver) { $colr='orange'; } else $colr='black';
+  echo "<td class=\"colL\"><font color=\"".$colr."\">".$row['ClientVersion']."</font></td>";
 
+  
+  
     echo "<td class=\"colM\">";
 	if ($row['RebootNeeded']==1) { echo "Yes"; } else { echo "No"; }
 	echo "</td>";

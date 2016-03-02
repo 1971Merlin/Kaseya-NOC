@@ -41,8 +41,13 @@ if ($org_filter!="Master") { $tsql7.="
   and dbo.DenormalizedOrgToMach.OrgId = (select id from kasadmin.org where kasadmin.org.ref = '".$org_filter."')"; }
 $tsql7.=" where Quarantined<>1 and ResolutionAction<>5";
 
-
-  
+$tsql10 = "select count(distinct avf.agentguid) as count
+  from AVFeature avf";
+if ($usescopefilter==true) { $tsql10.=" join vdb_Scopes_Machines foo on (foo.agentGuid = avf.agentGuid and foo.scope_ref = '".$scope_filter."')"; }
+if ($org_filter!="Master") { $tsql10.=" 
+ join dbo.DenormalizedOrgToMach on avf.agentGuid = dbo.DenormalizedOrgToMach.AgentGuid
+  and dbo.DenormalizedOrgToMach.OrgId = (select id from kasadmin.org where kasadmin.org.ref = '".$org_filter."')"; }
+  $tsql10.=" where installstatus=1 and (filemonitorstatus<>1 or EnableProtection<>1)"; 
   
 $stmt = sqlsrv_query( $conn, $tsql);
 if( $stmt === false )
@@ -65,7 +70,6 @@ if( $stmt3 === false )
      die( print_r( sqlsrv_errors(), true));
 }
 
-
 $stmt6 = sqlsrv_query( $conn, $tsql6);
 if( $stmt6 === false )
 {
@@ -73,10 +77,15 @@ if( $stmt6 === false )
      die( print_r( sqlsrv_errors(), true));
 }
 
-
-
 $stmt7 = sqlsrv_query( $conn, $tsql7);
 if( $stmt7 === false )
+{
+     echo "Error in executing query.<br/>";
+     die( print_r( sqlsrv_errors(), true));
+}
+
+$stmt10 = sqlsrv_query( $conn, $tsql10);
+if( $stmt10 === false )
 {
      echo "Error in executing query.<br/>";
      die( print_r( sqlsrv_errors(), true));
@@ -123,6 +132,9 @@ $inprogress = $row6['count'];
 $row7 = sqlsrv_fetch_array( $stmt7, SQLSRV_FETCH_ASSOC);
 $threatcount = $row7['ActiveThreats'];
 
+$row10 = sqlsrv_fetch_array( $stmt10, SQLSRV_FETCH_ASSOC);
+$issues = $row10['count'];
+
 
 echo "<div class=\"heading\">";
 echo "<image src=\"images/avg-logo.png\" style=\"vertical-align:middle\"> Security (AVG) Server Status";
@@ -140,7 +152,6 @@ echo "<div class=\"spacer\"></div>";
   echo "</div>";
   echo "</div>";
 
-
 // threats
   echo "<div class=\"minibox\">";
   echo "<div class=\"miniheading\">Active Threats</div>";
@@ -152,7 +163,16 @@ echo "<div class=\"spacer\"></div>";
   echo "</div>";
   echo "</div>";
 
-  
+// install issues
+  echo "<div class=\"minibox\">";
+  echo "<div class=\"miniheading\">Protection Issue</div>";
+  echo "<div class=\"mininum\">";
+  $color="blue";
+  if ($issues > 0) { $color="orange"; }
+  echo "<font color =\"".$color."\">".$issues."</font>";
+  echo "</div>";
+  echo "</div>";
+ 
 // scans
   echo "<div class=\"minibox\">";
   echo "<div class=\"miniheading\">No Scan >7 days</div>";

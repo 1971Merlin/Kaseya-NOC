@@ -84,6 +84,7 @@ $tsql = "select top ".$resultcount." * from
   end [ProtectionEnabled],
   avf.KaseyaAVVersion,avf.AVClientVersion,avf.SignatureVersion,avf.LastUpdateTime,
   (select count(VirusName) from AVFile where avf.agentguid = AVFile.agentguid and AVFile.Quarantined<>1 and ResolutionAction<>5) as ActiveThreats,
+  avf.filemonitorstatus as residentshield,
   vl.online as online, vl.currentLogin as currentLogin
   FROM AVFeature avf
   join vAgentLabel vl on vl.agentGuid = avf.agentGuid 
@@ -93,10 +94,17 @@ if ($org_filter!="Master") { $tsql.="
  join dbo.DenormalizedOrgToMach on avf.agentGuid = dbo.DenormalizedOrgToMach.AgentGuid
   and dbo.DenormalizedOrgToMach.OrgId = (select id from kasadmin.org where kasadmin.org.ref = '".$org_filter."')"; }
   $tsql.=") poop
-  where ActiveThreats>0 or InstallationStatus<>'Installed' or ProtectionEnabled<>'Enabled' or ((online>0 and online <198) and SignatureVersion not like '%".$currentAvSig."%')
-  order by ProtectionEnabled desc, ActiveThreats desc, SignatureVersion desc";
+  where (installationstatus='Installed' and residentshield<>1) or ActiveThreats>0 or InstallationStatus<>'Installed' or ProtectionEnabled<>'Enabled' or ((online>0 and online <198) and SignatureVersion not like '%".$currentAvSig."%')
+  order by case when residentshield = 0 then '1' when residentshield > 1 then '2' else '3' end, ProtectionEnabled desc, ActiveThreats desc, SignatureVersion desc";
 
-  
+$tsql10 = "select count(distinct avf.agentguid) as count
+  from AVFeature avf";
+if ($usescopefilter==true) { $tsql10.=" join vdb_Scopes_Machines foo on (foo.agentGuid = avf.agentGuid and foo.scope_ref = '".$scope_filter."')"; }
+if ($org_filter!="Master") { $tsql10.=" 
+ join dbo.DenormalizedOrgToMach on avf.agentGuid = dbo.DenormalizedOrgToMach.AgentGuid
+  and dbo.DenormalizedOrgToMach.OrgId = (select id from kasadmin.org where kasadmin.org.ref = '".$org_filter."')"; }
+  $tsql10.=" where installstatus=1 and (filemonitorstatus<>1 or EnableProtection<>1)";
+ 
 $tsql7 = "select count(VirusName) as ActiveThreats from AVFile";
 if ($usescopefilter==true) { $tsql7.=" join vdb_Scopes_Machines foo on (foo.agentGuid = AVFile.agentGuid and foo.scope_ref = '".$scope_filter."')"; }
 if ($org_filter!="Master") { $tsql7.=" 
@@ -220,6 +228,13 @@ if( $stmt9 === false )
      die( print_r( sqlsrv_errors(), true));
 }
 
+$stmt10 = sqlsrv_query( $conn, $tsql10);
+if( $stmt10 === false )
+{
+     echo "Error in executing query.<br/>";
+     die( print_r( sqlsrv_errors(), true));
+}
+
 
 $row2 = sqlsrv_fetch_array( $stmt2, SQLSRV_FETCH_ASSOC);
 $checked_count = $row2['count'];
@@ -235,6 +250,9 @@ $inprogress = $row6['count'];
 
 $row7 = sqlsrv_fetch_array( $stmt7, SQLSRV_FETCH_ASSOC);
 $threatcount = $row7['ActiveThreats'];
+
+$row10 = sqlsrv_fetch_array( $stmt10, SQLSRV_FETCH_ASSOC);
+$issues = $row10['count'];
 
 
 echo "<div class=\"heading heading2\">";
@@ -266,6 +284,15 @@ echo "<div class=\"spacer\"></div>";
   echo "</div>";
   echo "</div>";
   
+// install issues
+  echo "<div class=\"minibox\">";
+  echo "<div class=\"miniheading\">Protection Issue</div>";
+  echo "<div class=\"mininum\">";
+  $color="blue";
+  if ($issues > 0) { $color="orange"; }
+  echo "<font color =\"".$color."\">".$issues."</font>";
+  echo "</div>";
+  echo "</div>";
   
 // scans
   echo "<div class=\"minibox\">";
@@ -321,13 +348,23 @@ while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC))
     echo $row['ActiveThreats']."</td>";
   }
   
-  echo "<td class=\"colM\">";  
-  if ($row['ProtectionEnabled']!="Enabled") {
-    echo "<font color=red>".$row['ProtectionEnabled']."</font></td>";
-  } else {
-    echo $row['ProtectionEnabled']."</td>";
+  echo "<td class=\"colM\">"; 
+  
+  $color="black";
+  $message="";
+  
+  if ($row['InstallationStatus']=='Installed') {
+	$message=$row['ProtectionEnabled'];
+  	if ($row['ProtectionEnabled']!="Enabled") { $color = 'red'; $message=$row['ProtectionEnabled']; }
+  	if ($row['residentshield']<>1) { 
+  		$color = 'red';
+		$message='Res. Shield ';
+		if ($row['residentshield']==3) { $message.=' Partly Enabled'; } else { $message.=' Disabled'; }
+	}
   }
+  echo "<font color=".$color.">".$message."</font></td>";
 
+  
   echo "<td class=\"colM\">".$row['AVClientVersion']."</td>";
   echo "<td class=\"colM\">".$row['SignatureVersion']."</td>";
 
