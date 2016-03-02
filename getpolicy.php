@@ -132,7 +132,7 @@ if ($numovr<>0 or $numout<>0) {
      die( print_r( sqlsrv_errors(), true));
   }
   echo "<div class=\"datatable\">";
-  echo "<table id=\"patchlist\">";
+  echo "<table id=\"pollist\">";
   echo "<tr><th class=\"colL\">Machine Name</th><th class=\"colL\">Policy</th><th class=\"colM\">Status</th></tr>";
  
   while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC))

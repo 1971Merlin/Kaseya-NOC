@@ -8,15 +8,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1,  user-scalable=yes" />
 
 <!-- jquery libraries -->
-<script src="jquery-1.11.3.min.js" type="text/javascript"></script>
+<script src="jquery-1.12.1.min.js" type="text/javascript"></script>
 
 <!-- cookie library -->
 <script src="jcookie1.4.1/jquery.cookie.js"></script>
 
 <!-- charting libraries -->
-<script src="highcharts4.1.7/js/highcharts.js"></script>
-<script src="highcharts4.1.7/js/highcharts-3d.js"></script>
-<script src="highcharts4.1.7/js/highcharts-more.js"></script>
+<script src="highcharts4.2.3/js/highcharts.js"></script>
+<script src="highcharts4.2.3/js/highcharts-3d.js"></script>
+<script src="highcharts4.2.3/js/highcharts-more.js"></script>
 
 <!-- Jquery UI library -->
 <link rel="stylesheet" type="text/css" href="jquery-ui-1.11.4/themes/smoothness/jquery-ui.css" >
@@ -338,7 +338,6 @@ function refreshdiv2() {
 <?php if ($config['strip']['showLastCheckin'] == true) { echo "loadpanel(\"#lastcheck\",\"getLastCheckedIn.php\");"; } ?>
 <?php if ($config['strip']['showEXT'] == true) { echo "loadpanel(\"#extdetails\",\"getExternalURL.php\");"; } ?>		
 <?php if ($config['strip']['showRSS'] == true) { echo "loadpanel(\"#rssdetails\",\"getRSSFeed.php\");"; } ?>
-
 
 <?php if ($config['panels']['showCounts'] == true) { echo "loadpanel(\"#agenttypes\",\"getAgentTypeCounts.php\");"; } ?>
 <?php if ($config['panels']['showUptime'] == true) { echo "loadpanel(\"#uptime\",\"getUptime.php\");"; } ?>
