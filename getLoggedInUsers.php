@@ -5,7 +5,7 @@ include 'dblogin.php';
 
 $tsql = "SELECT adminName, adminIp
  FROM administrators
- where sessionExpiration >= GETDATE() and sessionid != -1
+ where sessionExpiration >= GETDATE() and sessionid != -1  and disableUntil <= GETDATE()
  order by adminName";
 
 $stmt = sqlsrv_query( $conn, $tsql);

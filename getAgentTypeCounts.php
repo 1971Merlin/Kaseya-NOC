@@ -96,12 +96,13 @@ while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC))
 		if (strpos($row['osInfo'],'R2 ')!==false) { $o8r2+=$row['count']; } else { $o8+=$row['count']; }
 	}
 	if ($row['ostype'] == "2003") {
-		echo "<img src=\"images/server2003.gif\">"; $o3+=$row['count'];
+		echo "<img src=\"images/server2003.gif\">";
 		if (strpos($row['osInfo'],'R2 ')!==false) { $o3r2+=$row['count']; } else { $o3+=$row['count']; }
 	}
 	if ($row['ostype'] == "2000") { echo "<img src=\"images/win2k.gif\">"; $o0+=$row['count']; }
 	if ($row['ostype'] == "Linux") { echo "<img src=\"images/linux.gif\"> Linux "; $linux+=$row['count']; }
 
+	
 
 	$osinfo=$row['osInfo']; 
 	$pos=strpos($osinfo,'Build');
@@ -121,6 +122,9 @@ while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC))
 
 	$count=$count+$row['count'];
 }
+
+
+
 
 $count2=$count." Server";
 if ($count>1){ $count2.="s"; }

@@ -42,13 +42,14 @@ if ($org_filter!="Master") { $tsql7.="
 $tsql7.=" where Quarantined<>1 and ResolutionAction<>5";
 
 $tsql10 = "select count(distinct avf.agentguid) as count
-  from AVFeature avf";
+  from AVFeature avf
+  join vAgentLabel vl on vl.agentGuid = avf.agentGuid";
 if ($usescopefilter==true) { $tsql10.=" join vdb_Scopes_Machines foo on (foo.agentGuid = avf.agentGuid and foo.scope_ref = '".$scope_filter."')"; }
 if ($org_filter!="Master") { $tsql10.=" 
  join dbo.DenormalizedOrgToMach on avf.agentGuid = dbo.DenormalizedOrgToMach.AgentGuid
   and dbo.DenormalizedOrgToMach.OrgId = (select id from kasadmin.org where kasadmin.org.ref = '".$org_filter."')"; }
-  $tsql10.=" where installstatus=1 and (filemonitorstatus<>1 or EnableProtection<>1)"; 
-  
+  $tsql10.=" where (installstatus<>1 or (installstatus=1 and (filemonitorstatus<>1 or EnableProtection<>1))) and (vl.online>0 and vl.online<198)";
+ 
 $stmt = sqlsrv_query( $conn, $tsql);
 if( $stmt === false )
 {
