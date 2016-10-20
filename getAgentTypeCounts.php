@@ -9,7 +9,8 @@ if ($usescopefilter==true) { $tsql.=" join vdb_Scopes_Machines foo on (foo.agent
 if ($org_filter!="Master") { $tsql.=" 
   join dbo.DenormalizedOrgToMach on userIpInfo.agentGuid = dbo.DenormalizedOrgToMach.AgentGuid
   and dbo.DenormalizedOrgToMach.OrgId = (select id from kasadmin.org where kasadmin.org.ref = '".$org_filter."')"; }
-  $tsql.=" where OsInfo like '%server%'
+  $tsql.=" join vAgentLabel vl on vl.agentGuid = useripinfo.agentGuid
+  where (OsInfo like '%server%' or osType in ('2003','2008','2012','2016'))
   group by ostype, osInfo, servicePackLevel, buildNumber
   order by ostype desc, osInfo desc, buildNumber desc, count desc";
   
@@ -19,7 +20,8 @@ if ($usescopefilter==true) { $tsql2.=" join vdb_Scopes_Machines foo on (foo.agen
 if ($org_filter!="Master") { $tsql2.=" 
   join dbo.DenormalizedOrgToMach on userIpInfo.agentGuid = dbo.DenormalizedOrgToMach.AgentGuid
   and dbo.DenormalizedOrgToMach.OrgId = (select id from kasadmin.org where kasadmin.org.ref = '".$org_filter."')"; }
-  $tsql2.=" where OsInfo not like '%server%'
+  $tsql2.=" join vAgentLabel vl on vl.agentGuid = useripinfo.agentGuid
+  where (OsInfo not like '%server%' and osType not in ('2003','2008','2012','2016'))
   group by ostype, osInfo, servicePackLevel, buildNumber, majorVersion, minorVersion
   order by ostype desc, osInfo desc, buildNumber desc, count DESC";
  

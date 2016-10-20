@@ -21,7 +21,7 @@ if ($org_filter!="Master") { $tsql.="
  $tsql.=" join userIpInfo ip on ip.agentGuid = agentState.agentGuid 
  join vAgentLabel vl on vl.agentGuid = agentState.agentGuid
  join users on users.agentGuid = agentState.agentGuid
- where ip.osInfo like '%server%' and agentState.online = 0 and (users.suspendAgent is null or users.suspendAgent = 0)
+ where (ip.osInfo like '%server%' or ip.osType in ('2003','2008','2012','2016')) and agentState.online = 0 and (users.suspendAgent is null or users.suspendAgent = 0)
  order by HoursOffline ASC";
 
 $tsql2 = "select count(distinct vl.DisplayName) as num
@@ -33,7 +33,7 @@ if ($org_filter!="Master") { $tsql2.="
  $tsql2.=" join userIpInfo ip on ip.agentGuid = agentState.agentGuid 
  join vAgentLabel vl on vl.agentGuid = agentState.agentGuid
  join users on users.agentGuid = agentState.agentGuid
- where ip.osInfo like '%server%' and agentState.online = 0 and (users.suspendAgent is null or users.suspendAgent = 0)";
+ where (ip.osInfo like '%server%' or ip.osType in ('2003','2008','2012','2016')) and agentState.online = 0 and (users.suspendAgent is null or users.suspendAgent = 0)";
 
 
 

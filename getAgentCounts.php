@@ -15,7 +15,7 @@ if ($org_filter!="Master") { $tsql.="
  join dbo.DenormalizedOrgToMach on agentState.agentGuid = dbo.DenormalizedOrgToMach.AgentGuid
   and dbo.DenormalizedOrgToMach.OrgId = (select id from kasadmin.org where kasadmin.org.ref = '".$org_filter."')"; }
 $tsql.=" join userIpInfo ip on ip.agentGuid = agentState.agentGuid
-  where online<>0 and ip.osInfo not like '%server%'
+  where online<>0 and (ip.osInfo not like '%server%' and ip.osType not in ('2003','2008','2012','2016'))
 
   union
   
@@ -26,7 +26,7 @@ if ($org_filter!="Master") { $tsql.="
  join dbo.DenormalizedOrgToMach on agentState.agentGuid = dbo.DenormalizedOrgToMach.AgentGuid
   and dbo.DenormalizedOrgToMach.OrgId = (select id from kasadmin.org where kasadmin.org.ref = '".$org_filter."')"; }
 $tsql.=" join userIpInfo ip on ip.agentGuid = agentState.agentGuid
-  where online=0 and ip.osInfo not like '%server%'
+  where online=0 and (ip.osInfo not like '%server%' and ip.osType not in ('2003','2008','2012','2016'))
   
   union
   
@@ -37,7 +37,7 @@ if ($org_filter!="Master") { $tsql.="
  join dbo.DenormalizedOrgToMach on agentState.agentGuid = dbo.DenormalizedOrgToMach.AgentGuid
   and dbo.DenormalizedOrgToMach.OrgId = (select id from kasadmin.org where kasadmin.org.ref = '".$org_filter."')"; }
 $tsql.=" join userIpInfo ip on ip.agentGuid = agentState.agentGuid
-  where online<>0 and ip.osInfo like '%server%'
+  where online<>0 and (ip.osInfo like '%server%' or ip.osType in ('2003','2008','2012','2016'))
   union
   
   select 0 as onl, 0 as ofl, 0 as onlsvr, count(distinct agentState.agentGuid) as oflsvr
@@ -47,7 +47,7 @@ if ($org_filter!="Master") { $tsql.="
  join dbo.DenormalizedOrgToMach on agentState.agentGuid = dbo.DenormalizedOrgToMach.AgentGuid
   and dbo.DenormalizedOrgToMach.OrgId = (select id from kasadmin.org where kasadmin.org.ref = '".$org_filter."')"; }
 $tsql.=" join userIpInfo ip on ip.agentGuid = agentState.agentGuid
-  where online=0 and ip.osInfo like '%server%'
+  where online=0 and (ip.osInfo like '%server%' or ip.osType in ('2003','2008','2012','2016'))
  
 ) foo2";
 
