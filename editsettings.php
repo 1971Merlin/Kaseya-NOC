@@ -458,8 +458,12 @@ id	ref						version
 46	Anti-Malware			8.0.0.0 (KAM aka Malwarebytes)
 47	Network Monitoring		8.0.0.0 (KNMi)
 50	KMDM					8.0.0.0 (Mobile management)
+60	KSBR					
 70	Discovery				8.0.0.0 (KND)
 85	vPro Management			8.0.0.0
+95	Anti-Virus ( new to 9.3)
+97	Anti-Malware ( new to 9.3)
+115	AuthAnvil
 134	Veeam Backup &amp; Replication	1.0.0.0
 135	Symantec Integration	2.5.1.13 (SEP aka Symantec Endpoint Security)
 
@@ -553,7 +557,7 @@ function toggle(className,parentState){
 <?php $res=findProduct($lic_data,15);?>
 <input type="checkbox" name="secstats" class="list1" <?php if($config['strip']['showSecurity']==true){echo "checked";} if ($res==null) {echo " disabled";} ?>>
 </td><td>
-<label for="secstats">Anti-Virus (KAV) Stats</label>
+<label for="secstats">Anti-Virus (Classic)</label>
 <?php $res=findProduct($lic_data,36);?>
 <input type="checkbox" name="avstats" class="list1" <?php if($config['strip']['showAV']==true){echo "checked";} if ($res==null) {echo " disabled";} ?>>
 </td>
@@ -586,17 +590,17 @@ function toggle(className,parentState){
 <td></tr>
 
 <tr><td>
-<label for="lowdisk">RC Details Panel</label>
+<label for="lowdisk">RC Details</label>
 <input type="checkbox" name="RCinfo" class='list2' <?php if($config['panels']['showRC']==true){echo "checked";} ?>>
 </td><td>VSA Core</td><td></td></tr>
 
 <tr><td>
-<label for="SD">Agent Counts Panel</label>
+<label for="SD">Agent Counts</label>
 <input type="checkbox" name="Counts" class='list2' <?php if($config['panels']['showCounts']==true){echo "checked";} ?>>
 </td><td>VSA Core</td><td></td></tr>
 
 <tr><td>
-<label for="SD">Policy Panel</label>
+<label for="SD">Policy</label>
 <?php $res=findProduct($lic_data,44);?>
 <input type="checkbox" name="Policy" class='list2' <?php if($config['panels']['showPolicy']==true and $res!=null) {echo "checked";} if ($res==null) {echo " disabled";} ?>>
 </td><td>
@@ -604,7 +608,7 @@ function toggle(className,parentState){
 </td></tr>
 
 <tr><td>
-<label for="SD">Service Desk Panel</label>
+<label for="SD">Service Desk</label>
 <?php $res=findProduct($lic_data,18);?>
 <input type="checkbox" name="SD" class='list2' <?php if($config['panels']['showSD']==true){echo "checked";} if ($res==null) {echo " disabled";} ?>>
 </td><td>
@@ -612,7 +616,7 @@ function toggle(className,parentState){
 </td></tr>
 
 <tr><td>
-<label for="uptime">Server Uptime Panel</label>
+<label for="uptime">Server Uptimes</label>
 <input type="checkbox" name="uptime" class='list2' <?php if($config['panels']['showUptime']==true){echo "checked";} ?>>
 </td><td>VSA Core</td><td></td></tr>
 
@@ -622,12 +626,12 @@ function toggle(className,parentState){
 </td><td>VSA Core</td><td></td></tr>
 
 <tr><td>
-<label for="alarms">Alarms Panel</label>
+<label for="alarms">Alarms</label>
 <input type="checkbox" name="alarm" class='list2' <?php if($config['panels']['showAlarms']==true){echo "checked";} ?>>
 </td><td>VSA Core</td><td></td></tr>
 
 <tr><td>
-<label for="patch">Patching Panel</label>
+<label for="patch">Patch Management</label>
 <?php $res=findProduct($lic_data,6);?>
 <input type="checkbox" name="patching" class='list2' <?php if($config['panels']['showPatching']==true){echo "checked";} if ($res==null) {echo " disabled";} ?>>
 </td><td>
@@ -635,12 +639,12 @@ function toggle(className,parentState){
 </td></tr>
 
 <tr><td>
-<label for="lowdisk">Low Disk Space Panel</label>
+<label for="lowdisk">Low Disk Space</label>
 <input type="checkbox" name="lowdisk" class='list2' <?php if($config['panels']['showLowDisk']==true){echo "checked";} ?>>
 </td><td>VSA Core</td><td></td></tr>
 
 <tr><td>
-<label for="avg">Security (KES) Panel</label>
+<label for="avg">Security (KES)</label>
 <?php $res=findProduct($lic_data,15);?>
 <input type="checkbox" name="av" class='list2' <?php if($config['panels']['showAv']==true){echo "checked";} if ($res==null) {echo " disabled";} ?>>
 </td><td>
@@ -648,7 +652,7 @@ function toggle(className,parentState){
 </td></tr>
 
 <tr><td>
-<label for="avg">Anti-Virus (KAV) Panel</label>
+<label for="avg">Anti-Virus (Classic)</label>
 <?php $res=null; $res=findProduct($lic_data,36);?>
 <input type="checkbox" name="KAV" class='list2' <?php if($config['panels']['showKAV']==true and $res!=null){echo "checked";} if ($res==null) {echo " disabled";} ?>>
 </td><td>
@@ -656,14 +660,14 @@ function toggle(className,parentState){
 </td></tr>
 
 <tr><td>
-<label for="SEP">Symantec EPP Panel</label>
+<label for="SEP">Symantec EPP</label>
 <?php $res=null; $res=findProduct($lic_data,135);?>
 <input type="checkbox" name="SEP" class='list2' <?php if($config['panels']['showSEP']==true){echo "checked";} if ($res==null) {echo " disabled";} ?>>
 </td><td>
 <?php if ($res!=null) { echo $lic_data[$res]['ref']."</td><td class=\"colM\">".$lic_data[$res]['version']; }  else { echo 'Not Installed</td><td>'; } ?>
 </td></tr>
 <tr><td>
-<label for="budr">Backup (KBU) Panels</label>
+<label for="budr">Backup (KBU)</label>
 <?php $res=null; $res=findProduct($lic_data,12);?>
 <input type="checkbox" name="budr" class='list2' <?php if($config['panels']['showBUDR']==true){echo "checked";} if ($res==null) {echo " disabled";} ?>>
 </td><td>

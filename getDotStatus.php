@@ -157,10 +157,13 @@ if ($avon==1) {
   $tsql = "select count(distinct Machine_GroupID) as count, groupName
   from (SELECT avf.InstallStatus, vl.Machine_GroupID,avf.EnableProtection, vl.groupName,
  (select count(VirusName) from AVFile where avf.agentguid = AVFile.agentguid and AVFile.Quarantined<>1) as ActiveThreats
-  FROM AVFeature avf
-  join vAgentName vl on vl.agentGuid = avf.agentGuid  
+  FROM AVFeature avf";
+  if ($usescopefilter==true) { $tsql.=" join vdb_Scopes_Machines foo on (foo.agentGuid = avf.agentGuid and foo.scope_ref = '".$scope_filter."')"; }
+  if ($org_filter!="Master") { $tsql.=" 
+  join dbo.DenormalizedOrgToMach on avf.agentGuid = dbo.DenormalizedOrgToMach.AgentGuid
+  and dbo.DenormalizedOrgToMach.OrgId = (select id from kasadmin.org where kasadmin.org.ref = '".$org_filter."')"; }
+  $tsql.=" join vAgentName vl on vl.agentGuid = avf.agentGuid  
   JOIN AVProfile avp ON avf.ProfileId = avp.Id
-  join vdb_Scopes_Machines foo on (foo.agentGuid = avf.agentGuid ) 
   where (avf.InstallStatus<>1 or avf.EnableProtection<>1)
   ) poop
   where (ActiveThreats>0 or InstallStatus<>1 or EnableProtection<>1)

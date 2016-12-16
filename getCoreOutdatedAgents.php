@@ -122,7 +122,7 @@ if ($tally!=0) {
   while( $row = sqlsrv_fetch_array( $stmt3, SQLSRV_FETCH_ASSOC))
   {
      echo "<tr><td class=\"colL\">".$row['machName']."</td>";
-	 echo "<td class=\"colM\">".fmtver($row['agentVersion'])."</td>";
+	 echo "<td class=\"colL\">".fmtver($row['agentVersion'])."</td>";
 	 echo "</td></tr>";
   }
   echo "</table>";

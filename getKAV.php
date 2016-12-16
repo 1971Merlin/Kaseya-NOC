@@ -116,7 +116,7 @@ $row10 = sqlsrv_fetch_array( $stmt10, SQLSRV_FETCH_ASSOC);
 $row11 = sqlsrv_fetch_array( $stmt11, SQLSRV_FETCH_ASSOC);
 
 echo "<div class=\"heading\">";
-echo "<image src=\"images/kav-logo.png\" style=\"vertical-align:middle\"> Anti-Virus (KAV) Server Status";
+echo "<image src=\"images/kav-logo.png\" style=\"vertical-align:middle\"> Anti-Virus (Classic) Server Status";
 echo "</div>";
 
 // spacer

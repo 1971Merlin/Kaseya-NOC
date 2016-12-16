@@ -76,6 +76,7 @@ $o8=0;
 $o8r2=0;
 $o12=0;
 $o12r2=0;
+$o16=0;
 $linux=0;
 
 $stmt = sqlsrv_query( $conn, $tsql);
@@ -88,7 +89,10 @@ if( $stmt === false )
 while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC))
 {
 		echo "<tr><td class=\"colL\" ref=\"{$row['osInfo']}\">";
+
+	if ($row['ostype'] == "2016") { echo "<img src=\"images/server2016.gif\">"; $o16+=$row['count']; }
 		
+
 	if ($row['ostype'] == "2012") { 
 		echo "<img src=\"images/server2012.gif\">";
 		if (strpos($row['osInfo'],'R2 ')!==false) { $o12r2+=$row['count']; } else { $o12+=$row['count']; }
@@ -145,6 +149,7 @@ if ($o8>0) { $datax[] = "['2008', ".$o8."]"; }
 if ($o8r2>0) { $datax[] = "['2008 R2', ".$o8r2."]"; }
 if ($o12>0) { $datax[] = "['2012', ".$o12."]"; }
 if ($o12r2>0) { $datax[] = "['2012 R2', ".$o12r2."]"; }
+if ($o16>0) { $datax[] = "['2016', ".$o16."]"; }
 if ($linux>0) {$datax[] = "['Linux', ".$linux."]"; }
 
 
