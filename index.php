@@ -236,9 +236,12 @@
 <?php if ($config['panels']['showLowDisk'] == true) { echo "<div id=\"lowdisk\" class=\"panel\"></div>"; } ?>
 <?php if ($config['panels']['showAv'] == true) { echo "<div id=\"security\" class=\"panel\"></div>"; } ?>
 <?php if ($config['panels']['showKAV'] == true) { echo "<div id=\"KAV\" class=\"panel\"></div>"; } ?>
+<?php if ($config['panels']['showSEC'] == true) { echo "<div id=\"SEC\" class=\"panel\"></div>"; } ?>
 <?php if ($config['panels']['showSEP'] == true) { echo "<div id=\"SEP\" class=\"panel\"></div>"; } ?>
 <?php if ($config['panels']['showBUDR'] == true) { echo "<div id=\"BUDR\" class=\"panel\"></div>"; } ?>
 <?php if ($config['panels']['showBUDR'] == true) { echo "<div id=\"BUgraph\" class=\"panel\"></div>"; } ?>
+
+
 	</div>
 </div>
 
@@ -349,6 +352,7 @@ function refreshdiv2() {
 <?php if ($config['panels']['showLowDisk'] == true) { echo "loadpanel(\"#lowdisk\",\"getlowdisk.php\");"; } ?>
 <?php if ($config['panels']['showAv'] == true) { echo "loadpanel(\"#security\",\"getSecurityInfo.php\");"; } ?>
 <?php if ($config['panels']['showKAV'] == true) { echo "loadpanel(\"#KAV\",\"getKAVinfo.php\");"; } ?>
+<?php if ($config['panels']['showSEC'] == true) { echo "loadpanel(\"#SEC\",\"getSEC.php\");"; } ?>
 <?php if ($config['panels']['showSEP'] == true) { echo "loadpanel(\"#SEP\",\"getSEPinfo.php\");"; } ?>
 <?php if ($config['panels']['showBUDR'] == true) { echo "loadpanel(\"#BUDR\",\"getBUDRstatus.php\");"; } ?>
 <?php if ($config['panels']['showBUDR'] == true) { echo "loadpanel(\"#BUgraph\",\"getBackupTimes.php\");"; } ?>

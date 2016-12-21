@@ -127,6 +127,9 @@ if (!isset($config['panels']['showUptime'])) { $config['panels']['showUptime'] =
 if (!isset($config['panels']['showPatching'])) { $config['panels']['showPatching'] = true; }
 if (!isset($config['panels']['showLowDisk'])) { $config['panels']['showLowDisk'] = true; }
 if (!isset($config['panels']['showRC'])) { $config['panels']['showRC'] = true; }
+if (!isset($config['panels']['showSEC'])) { $config['panels']['showSEC'] = true; }
+
+
 
 // load an external image?
   $exturl = $config['strip']['extURL'];

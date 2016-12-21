@@ -275,8 +275,8 @@ echo "</tr></table>";
 
 $checked_count = $row2['svrlic'] + $row2['wslic'];
 
-echo $row2['svrlicpurch']-$row2['svrlic']-$row2['svrlicexp']." available Server Licenses</br>";
-echo $row2['wslicpurch']-$row2['wslic']-$row2['wslicexp']." available Workstation Licenses</br>";
+echo max($row2['svrlicpurch']-$row2['svrlic'],0)." available Server Licenses</br>";
+echo max($row2['wslicpurch']-$row2['wslic'],0)." available Workstation Licenses</br>";
 echo "AV Engine ".$row3['installername'].": Current Version ".$row3['version'].". Available Version ".$row3['availableversion']."</br>";
 
 $curver = $row3['version'];
@@ -288,7 +288,7 @@ echo "<div class=\"spacer\"></div>";
 
 
 echo "<div class=\"heading heading2\">";
-echo "Anti-Virus (KAV) Workstation Status";
+echo "Anti-Virus (Classic) Workstation Status";
 echo "<div class=\"topn\">showing first ".$resultcount."</div>";
 echo "</div>";
 
