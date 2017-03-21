@@ -11,7 +11,7 @@ $tsql = "select distinct top ".$resultcount." machineId, ClientVersion, HasActiv
  from sec.vMachineInfoExtended
 
 ";
-if ($usescopefilter==true) { $tsql.=" join vdb_Scopes_Machines foo on (foo.agentGuid = vCurrdiskInfo.agentGuid and foo.scope_ref = '".$scope_filter."')"; }
+if ($usescopefilter==true) { $tsql.=" join vdb_Scopes_Machines foo on (foo.agentGuid = sec.vMachineInfoExtended.agentGuid and foo.scope_ref = '".$scope_filter."')"; }
 if ($org_filter!="Master") { $tsql.=" 
  join dbo.DenormalizedOrgToMach on sec.vMachineInfoExtended.agentGuid = dbo.DenormalizedOrgToMach.AgentGuid
   and dbo.DenormalizedOrgToMach.OrgId = (select id from kasadmin.org where kasadmin.org.ref = '".$org_filter."')"; }
@@ -19,7 +19,7 @@ if ($org_filter!="Master") { $tsql.="
  
  join vAgentLabel st on st.agentGuid = vMachineInfoExtended.agentGuid
 
- where isInstalled=1
+ where online>0 and isInstalled=1 and (HasActiveThreats > 0 or (LastUpdated is null or lastupdated < DATEADD(day,-7,getdate())) or (LastFullScan is null or lastfullscan < DATEADD(day,-30,getdate())))
  
  order by HasActiveThreats desc, ClientVersion, LastUpdated, LastFullScan
  
@@ -124,9 +124,12 @@ while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC))
   echo "<td class=\"colM\">".$row['ProfileName']."</td>";   
 
   $dispdate = (isset($row['LastUpdated']) ? date($datestyle." ".$timestyle,$row['LastUpdated']->getTimestamp()) : 'Never');
-  echo "<td class=\"colM\">".$dispdate."</td>";
+  $color = (isset($row['LastUpdated']) ? 'black' : 'red');
+  echo "<td class=\"colM\"><font color =\"".$color."\">".$dispdate."</font></td>";
+  
   $dispdate = (isset($row['LastFullScan']) ? date($datestyle." ".$timestyle,$row['LastFullScan']->getTimestamp()) : 'Never');
-  echo "<td class=\"colM\">".$dispdate."</td>";   
+  $color = (isset($row['LastFullScan']) ? 'black' : 'red');
+  echo "<td class=\"colM\"><font color =\"".$color."\">".$dispdate."</font></td>";   
   
 }
 echo "</table>";

@@ -446,27 +446,31 @@ id	ref						version
 0	Kaseya System Patch		8.0.0.11
 3	Agent Procedures		~AddonVersion~
 6	Patch Management		8.0.0.0
+9	Agent
 12	Backup					8.0.0.0 (KBU aka BUDR aka Acronis)
 15	KES						8.0.0.0 (KES aka AVG)
 18	Service Desk			8.0.0.0
 29	Desktop Management: Migration	8.0.0.0
 30	Desktop Management: Policy	8.0.0.0
 31	Network Discovery		1.2.0.0
-36	Anti-Virus				8.0.0.0 (KAV aka Kaspersky)
+36	Anti-Virus (classic)	8.0.0.0 (KAV aka Kaspersky)
 41	Time Tracking			8.0.0.0
 42	Service Billing			8.0.0.0
 44	Policy					8.0.0.0
-46	Anti-Malware			8.0.0.0 (KAM aka Malwarebytes)
+46	Anti-Malware (classic)	8.0.0.0 (KAM aka Malwarebytes)
 47	Network Monitoring		8.0.0.0 (KNMi)
 50	KMDM					8.0.0.0 (Mobile management)
+53	Software Deployment
+54	Cloud Backup			9.4.0.0 (KCB aka Acronis Cloudnew to 9.4)
 60	KSBR					
 70	Discovery				8.0.0.0 (KND)
 85	vPro Management			8.0.0.0
-95	Anti-Virus ( new to 9.3)
+95	Anti-Virus (Kaspersky, new to 9.3)
 97	Anti-Malware ( new to 9.3)
 115	AuthAnvil
-134	Veeam Backup &amp; Replication	1.0.0.0
+134	Veeam Backup & Replication	1.0.0.0
 135	Symantec Integration	2.5.1.13 (SEP aka Symantec Endpoint Security)
+138	ESET					2.4.0.0
 
 */
 
