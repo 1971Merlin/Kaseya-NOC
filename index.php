@@ -240,6 +240,7 @@
 <?php if ($config['panels']['showSEP'] == true) { echo "<div id=\"SEP\" class=\"panel\"></div>"; } ?>
 <?php if ($config['panels']['showBUDR'] == true) { echo "<div id=\"BUDR\" class=\"panel\"></div>"; } ?>
 <?php if ($config['panels']['showBUDR'] == true) { echo "<div id=\"BUgraph\" class=\"panel\"></div>"; } ?>
+<?php if ($config['panels']['showKCB'] == true) { echo "<div id=\"KCB\" class=\"panel\"></div>"; } ?>
 
 
 	</div>
@@ -357,6 +358,8 @@ function refreshdiv2() {
 <?php if ($config['panels']['showBUDR'] == true) { echo "loadpanel(\"#BUDR\",\"getBUDRstatus.php\");"; } ?>
 <?php if ($config['panels']['showBUDR'] == true) { echo "loadpanel(\"#BUgraph\",\"getBackupTimes.php\");"; } ?>
 <?php if ($config['panels']['showRC'] == true) { echo "loadpanel(\"#RCinfo\",\"getRCdetails.php\");"; } ?>
+<?php if ($config['panels']['showKCB'] == true) { echo "loadpanel(\"#KCB\",\"getCloudBU.php\");"; } ?>
+
 
 	tm2 = setTimeout('refreshdiv2();',60000);
 }

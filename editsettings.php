@@ -138,6 +138,7 @@ if (isset($_POST['org']))  $config['config']['org_filter']=$_POST['org']; else  
  if (isset($_POST['lowdisk'])) $config['panels']['showLowDisk']="1"; else $config['panels']['showLowDisk']="0";
  if (isset($_POST['RCinfo'])) $config['panels']['showRC']="1"; else $config['panels']['showRC']="0";
  if (isset($_POST['SEC'])) $config['panels']['showSEC']="1"; else $config['panels']['showSEC']="0";
+ if (isset($_POST['KCB'])) $config['panels']['showKCB']="1"; else $config['panels']['showKCB']="0";
 
  
  $cache_file = $_SERVER['DOCUMENT_ROOT'].'/rsscache.rss';
@@ -211,6 +212,7 @@ if (!isset($config['panels']['showPatching'])) { $config['panels']['showPatching
 if (!isset($config['panels']['showLowDisk'])) { $config['panels']['showLowDisk'] = true; }
 if (!isset($config['panels']['showRC'])) { $config['panels']['showRC'] = true; }
 if (!isset($config['panels']['showSEC'])) { $config['panels']['showSEC'] = true; }
+if (!isset($config['panels']['showKCB'])) { $config['panels']['showKCB'] = true; }
 
 
 // date & time formatting parameters
@@ -686,7 +688,13 @@ function toggle(className,parentState){
 </td><td>
 <?php if ($res!=null) { echo $lic_data[$res]['ref']."</td><td class=\"colM\">".$lic_data[$res]['version']; }  else { echo 'Not Installed</td><td>'; } ?>
 </td><td></td></tr>
-
+<tr><td>
+<label for="KCB">Cloud Backup</label>
+<?php $res=null; $res=findProduct($lic_data,54);?>
+<input type="checkbox" name="KCB" class='list2' <?php if($config['panels']['showKCB']==true){echo "checked";} if ($res==null) {echo " disabled";} ?>>
+</td><td>
+<?php if ($res!=null) { echo $lic_data[$res]['ref']."</td><td class=\"colM\">".$lic_data[$res]['version']; }  else { echo 'Not Installed</td><td>'; } ?>
+</td><td></td></tr>
 
 
 
