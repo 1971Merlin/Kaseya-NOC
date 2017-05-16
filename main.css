@@ -28,11 +28,20 @@ table {
 
 
 /* underlining in data tables only */
-.datatable  th, .datatable td { border-bottom: 1px solid gainsboro; }
+.datatable th, .datatable td { border-bottom: 1px solid gainsboro; }
+.datatable2 th, .datatable2 td { border-bottom: 1px solid gainsboro; }
 
+/* regular tables */
 .datatable { 
   float:left;
   clear:both;
+  vertical-align: top;
+}
+
+/* for a row of info DIVs side by side */
+.datatable2 {
+	display: inline-block;
+	vertical-align: top;
 }
 
 /* justify headings & data */
@@ -202,6 +211,19 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', end
 border-top: 1px solid gray;
 }
 
+.heading3
+{
+ float:left;
+ clear:both;
+ font-size: 12px;
+ font-weight: bold;
+ color: blue;
+ padding: 2px 2px 2px 0px;
+ margin-bottom: 2px;
+ }
+
+
+
 /* showing top n items label */
 .topn
 {
@@ -239,7 +261,7 @@ border-top: 1px solid gray;
 {
  float:left;
  clear:both;
- font-size: 48px;
+ font-size: 16px;
  text-shadow:1px 1px 1px;
  padding-left:3px;
  padding-right:3px;

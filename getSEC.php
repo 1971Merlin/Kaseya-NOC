@@ -69,7 +69,8 @@ echo "</div>";
 
 echo "<div class=\"datatable\">";
 echo "<table id=\"srvrstats\">";
-echo "<tr><th class=\"colL\">License Counts</th><th class=\"colL\">Workstation</th><th class=\"colL\">Server</th></tr>";
+echo "<caption class=\"heading3\">Licence Information</caption>";
+echo "<tr><th>&nbsp;</th><th class=\"colL\">Workstation</th><th class=\"colL\">Server</th></tr>";
 foreach ($licdata as $licentry)
 {
     echo "<tr><td class=\"colL\">".$licentry['caption']."</td><td class=\"colM\">".$licentry['WorkstationCount']."</td><td class=\"colM\">".$licentry['ServerCount']."</td></tr>";
