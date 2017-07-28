@@ -13,7 +13,7 @@ if ($org_filter!="Master") { $tsql.="
   and dbo.DenormalizedOrgToMach.OrgId = (select id from kasadmin.org where kasadmin.org.ref = '".$org_filter."')"; }
  $tsql.=" join userIpInfo ip on ip.agentGuid = t1.agentGuid
   join vAgentLabel st on st.agentGuid = t1.agentGuid 
-  where ip.osInfo like '%server%'
+  where (ip.osInfo like '%server%' or ip.osType in ('2003','2008','2012','2016'))
   order by olorder, lastReboot desc ) a
   
   union 
@@ -28,10 +28,8 @@ if ($org_filter!="Master") { $tsql.="
   and dbo.DenormalizedOrgToMach.OrgId = (select id from kasadmin.org where kasadmin.org.ref = '".$org_filter."')"; }
  $tsql.=" join userIpInfo ip on ip.agentGuid = t1.agentGuid
   join vAgentLabel st on st.agentGuid = t1.agentGuid 
-  where ip.osInfo like '%server%'
+  where (ip.osInfo like '%server%'or ip.osType in ('2003','2008','2012','2016'))
   order by olorder desc, lastReboot ) b
-  
-  
   order by olorder, lastReboot desc
   ";
 
