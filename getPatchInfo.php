@@ -143,7 +143,7 @@ if ($org_filter!="Master") { $tsql.="
   and dbo.DenormalizedOrgToMach.OrgId = (select id from kasadmin.org where kasadmin.org.ref = '".$org_filter."')"; }
   $tsql.=" join vAgentLabel vl on vl.agentGuid = vPatchPolicyMember.agentGuid
   join vPatchStatusByAgent pp on pp.agentGuid = vPatchPolicyMember.agentGuid
-  where PolicyName = '-No policy-' and (missingApproved >0 or failed >0)
+  where PolicyName = '-No policy-' and (vPatchPolicyMember.OperatingSystem like 'Windows%')
   order by rebootPending desc, failed desc, missingApproved desc, pending desc";
 
    

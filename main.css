@@ -31,6 +31,25 @@ table {
 .datatable th, .datatable td { border-bottom: 1px solid gainsboro; }
 .datatable2 th, .datatable2 td { border-bottom: 1px solid gainsboro; }
 
+.datatable caption {
+	color: green;
+	font-size:13px;
+	font-weight: bold;
+	width: 100%;
+	white-space: nowrap;
+	padding: 0px 0px 0px 2px;
+	}
+
+.datatable2 caption {
+	color: green;
+	font-size:13px;
+	font-weight: bold;
+	width: 100%;
+	white-space: nowrap;
+	padding: 0px 0px 0px 2px;
+	}
+
+
 /* regular tables */
 .datatable { 
   float:left;
