@@ -22,7 +22,7 @@ if ($usescopefilter==true) { $tsql.=" join vdb_Scopes_Machines foo on (foo.agent
 if ($org_filter!="Master") { $tsql.=" 
  join dbo.DenormalizedOrgToMach on users.agentGuid = dbo.DenormalizedOrgToMach.AgentGuid
   and dbo.DenormalizedOrgToMach.OrgId = (select id from kasadmin.org where kasadmin.org.ref = '".$org_filter."')"; }
-  if ($avon==1) { $tsql .= " join AVFeature avf on avf.agentGuid = users.agentGuid "; }
+  if ($avon==1) { $tsql .= " left join AVFeature avf on avf.agentGuid = users.agentGuid "; }
   $tsql.=" join vAgentLabel vl on vl.agentGuid = users.agentGuid
   join patchStatusTotals ps on ps.agentGuid = users.agentGuid
   right join agentState st on st.agentGuid = users.agentGuid
@@ -37,7 +37,7 @@ if ($usescopefilter==true) { $tsql2.=" join vdb_Scopes_Machines foo on (foo.agen
 if ($org_filter!="Master") { $tsql2.=" 
  join dbo.DenormalizedOrgToMach on users.agentGuid = dbo.DenormalizedOrgToMach.AgentGuid
   and dbo.DenormalizedOrgToMach.OrgId = (select id from kasadmin.org where kasadmin.org.ref = '".$org_filter."')"; }
-  if ($avon==1) { $tsql2 .= " join AVFeature avf on avf.agentGuid = users.agentGuid "; }
+  if ($avon==1) { $tsql2 .= " left join AVFeature avf on avf.agentGuid = users.agentGuid "; }
   $tsql2.=" join vAgentLabel vl on vl.agentGuid = users.agentGuid
   join patchStatusTotals ps on ps.agentGuid = users.agentGuid
   right join agentState st on st.agentGuid = users.agentGuid
