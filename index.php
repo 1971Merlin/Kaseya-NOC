@@ -19,7 +19,7 @@
 <script src="highcharts4.2.3/js/highcharts-more.js"></script>
 
 <!-- Jquery UI library -->
-<link rel="stylesheet" type="text/css" href="jquery-ui-1.11.4/themes/smoothness/jquery-ui.css" >
+<link rel="stylesheet" type="text/css" href="jquery-ui-1.11.4/themes/smoothness/jquery-ui.css">
 <script src="jquery-ui-1.11.4/jquery-ui.js" type="text/javascript"></script>
 
 <!-- must load my stylesheet last, to alter jQuery defaults -->

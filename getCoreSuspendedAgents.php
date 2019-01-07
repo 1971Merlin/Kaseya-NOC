@@ -14,62 +14,36 @@ if ($id=='r') { $left=false; }
 
 //* suspended agent *//
 
-$tsql = "select distinct vl.displayName as MachineName, suspendAgent 
+$tsql = "select distinct vl.displayName as MachineName,
+ case
+	when users.suspendAgent=1 then 'Agent'
+	when patchParams.suspendAutoUpdate=1 and ((getdate()> monitorSuspend.startSuspend) and (getdate() < monitorSuspend.endSuspend)) then 'Patching, Monitor'
+	when patchParams.suspendAutoUpdate=1 then 'Patching'
+	when ((getdate()> monitorSuspend.startSuspend) and (getdate() < monitorSuspend.endSuspend)) then 'Monitor'
+ end as reason
  from users";
 if ($usescopefilter==true) { $tsql.=" join vdb_Scopes_Machines foo on (foo.agentGuid = users.agentGuid and foo.scope_ref = '".$scope_filter."')"; }
 if ($org_filter!="Master") { $tsql.=" 
  join dbo.DenormalizedOrgToMach on users.agentGuid = dbo.DenormalizedOrgToMach.AgentGuid
   and dbo.DenormalizedOrgToMach.OrgId = (select id from kasadmin.org where kasadmin.org.ref = '".$org_filter."')"; }
  $tsql.=" join vAgentLabel vl on vl.agentGuid = users.agentGuid
- where users.suspendAgent=1";
+  full outer join patchParams on users.agentGuid = patchParams.agentGuid
+  full outer join monitorSuspend on users.agentGuid = monitorSuspend.agentGuid
+  where users.suspendAgent=1 or patchParams.suspendAutoUpdate=1 or ((getdate()> monitorSuspend.startSuspend) and (getdate() < monitorSuspend.endSuspend))";
 
+
+//* get counts *//
+ 
 $tsql2 = "select count(distinct users.agentGuid) as num
  from users";
 if ($usescopefilter==true) { $tsql2.=" join vdb_Scopes_Machines foo on (foo.agentGuid = users.agentGuid and foo.scope_ref = '".$scope_filter."')"; }
 if ($org_filter!="Master") { $tsql2.=" 
  join dbo.DenormalizedOrgToMach on users.agentGuid = dbo.DenormalizedOrgToMach.AgentGuid
   and dbo.DenormalizedOrgToMach.OrgId = (select id from kasadmin.org where kasadmin.org.ref = '".$org_filter."')"; }
- $tsql2.=" where users.suspendAgent=1";
- 
- //* suspended alarms *//
- 
-$tsql3 = "select distinct vl.displayName as MachineName
- from monitorSuspend";
-if ($usescopefilter==true) { $tsql3.=" join vdb_Scopes_Machines foo on (foo.agentGuid = monitorSuspend.agentGuid and foo.scope_ref = '".$scope_filter."')"; }
-if ($org_filter!="Master") { $tsql3.=" 
- join dbo.DenormalizedOrgToMach on monitorSuspend.agentGuid = dbo.DenormalizedOrgToMach.AgentGuid
-  and dbo.DenormalizedOrgToMach.OrgId = (select id from kasadmin.org where kasadmin.org.ref = '".$org_filter."')"; }
- $tsql3.=" join vAgentLabel vl on vl.agentGuid = monitorSuspend.agentGuid
- where (getdate()> startSuspend) and (getdate() < endSuspend)";
+  $tsql2.=" full outer join patchParams on users.agentGuid = patchParams.agentGuid
+  full outer join monitorSuspend on users.agentGuid = monitorSuspend.agentGuid
+  where users.suspendAgent=1 or patchParams.suspendAutoUpdate=1 or ((getdate()> monitorSuspend.startSuspend) and (getdate() < monitorSuspend.endSuspend))";
 
-$tsql4 = "select count(distinct monitorSuspend.agentGuid) as num
- from monitorSuspend";
-if ($usescopefilter==true) { $tsql4.=" join vdb_Scopes_Machines foo on (foo.agentGuid = monitorSuspend.agentGuid and foo.scope_ref = '".$scope_filter."')"; }
-if ($org_filter!="Master") { $tsql4.=" 
- join dbo.DenormalizedOrgToMach on monitorSuspend.agentGuid = dbo.DenormalizedOrgToMach.AgentGuid
-  and dbo.DenormalizedOrgToMach.OrgId = (select id from kasadmin.org where kasadmin.org.ref = '".$org_filter."')"; }
- $tsql4.=" where (getdate()> startSuspend) and (getdate() < endSuspend)";
- 
-//* suspended patching *//
- 
-$tsql5 = "SELECT distinct vl.displayName as MachineName
-  FROM patchParams";
-if ($usescopefilter==true) { $tsql5.=" join vdb_Scopes_Machines foo on (foo.agentGuid = patchParams.agentGuid and foo.scope_ref = '".$scope_filter."')"; }
-if ($org_filter!="Master") { $tsql5.=" 
- join dbo.DenormalizedOrgToMach on patchParams.agentGuid = dbo.DenormalizedOrgToMach.AgentGuid
-  and dbo.DenormalizedOrgToMach.OrgId = (select id from kasadmin.org where kasadmin.org.ref = '".$org_filter."')"; }
- $tsql5.=" join vAgentLabel vl on vl.agentGuid = patchParams.agentGuid
- where suspendAutoUpdate=1";
-  
-$tsql6 = "SELECT count(distinct patchParams.agentGuid) as num
-  FROM patchParams";
-if ($usescopefilter==true) { $tsql6.=" join vdb_Scopes_Machines foo on (foo.agentGuid = patchParams.agentGuid and foo.scope_ref = '".$scope_filter."')"; }
-if ($org_filter!="Master") { $tsql6.=" 
- join dbo.DenormalizedOrgToMach on patchParams.agentGuid = dbo.DenormalizedOrgToMach.AgentGuid
-  and dbo.DenormalizedOrgToMach.OrgId = (select id from kasadmin.org where kasadmin.org.ref = '".$org_filter."')"; }
- $tsql6.=" where suspendAutoUpdate=1";
- 
-  
 $stmt = sqlsrv_query( $conn, $tsql);
 if( $stmt === false )
 {
@@ -84,41 +58,12 @@ if( $stmt2 === false )
      die( print_r( sqlsrv_errors(), true));
 }
 
-$stmt3 = sqlsrv_query( $conn, $tsql3);
-if( $stmt3 === false )
-{
-     echo "Error in executing query.<br/>";
-     die( print_r( sqlsrv_errors(), true));
-}
-
-$stmt4 = sqlsrv_query( $conn, $tsql4);
-if( $stmt4 === false )
-{
-     echo "Error in executing query.<br/>";
-     die( print_r( sqlsrv_errors(), true));
-}
-
-$stmt5 = sqlsrv_query( $conn, $tsql5);
-if( $stmt5 === false )
-{
-     echo "Error in executing query.<br/>";
-     die( print_r( sqlsrv_errors(), true));
-}
-
-$stmt6 = sqlsrv_query( $conn, $tsql6);
-if( $stmt6 === false )
-{
-     echo "Error in executing query.<br/>";
-     die( print_r( sqlsrv_errors(), true));
-}
-
 
 
 $row_count = sqlsrv_fetch_array( $stmt2, SQLSRV_FETCH_ASSOC);
-$row_count2 = sqlsrv_fetch_array( $stmt4, SQLSRV_FETCH_ASSOC);
-$row_count3 = sqlsrv_fetch_array( $stmt6, SQLSRV_FETCH_ASSOC);
 
-$total = $row_count['num'] + $row_count2['num'] + $row_count3['num'];
+
+$total = $row_count['num'];
  
  
 if ($left==true) { 
@@ -143,7 +88,6 @@ if ($right==true) {
 
 echo "<div class=\"heading\">";
 echo "Suspended Agents";
-// echo "<div class=\"topn\">showing first ".$resultcount."</div>";
 echo "</div>";
 
 
@@ -153,15 +97,7 @@ if ($total!=0) {
 
   while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC))
   {
-     echo "<tr><td class=\"colL\"><FONT COLOR=\"FF0000\">".$row['MachineName']."</font></td><td class=\"colM\">Agent</td></tr>";
-  }
-    while( $row = sqlsrv_fetch_array( $stmt3, SQLSRV_FETCH_ASSOC))
-  {
-     echo "<tr><td class=\"colL\"><FONT COLOR=\"FF0000\">".$row['MachineName']."</font></td><td class=\"colM\">Alarms</td></tr>";
-  }
-      while( $row = sqlsrv_fetch_array( $stmt5, SQLSRV_FETCH_ASSOC))
-  {
-     echo "<tr><td class=\"colL\"><FONT COLOR=\"FF0000\">".$row['MachineName']."</font></td><td class=\"colM\">Patching</td></tr>";
+     echo "<tr><td class=\"colL\"><FONT COLOR=\"FF0000\">".$row['MachineName']."</font></td><td class=\"colM\">".$row['reason']."</td></tr>";
   }
   echo "</table>";
 }
