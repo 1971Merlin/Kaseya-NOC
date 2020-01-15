@@ -45,8 +45,8 @@ $( "#agentcnts td:first-child, #agentWScnts td:first-child" ).mouseover(function
 		$("#agentdialog").dialog("option", "minHeight", 50);
 		$("#agentdialog").dialog("option", "maxHeight", 350);
 //		$("#agentdialog").dialog( "moveToTop" );
-		$("#agentdialog").css('overflow', 'none');
-		$("#agentdialog").dialog("option", "width", 'auto');
+		$("#agentdialog").css("overflow", 'none');
+		$("#agentdialog").dialog("option", "width", 300);
 		$("#agentdialog").dialog( "open" );
 		$("#agentdialog").dialog( "option" ,"position", { my: "left top", at: "right middle", of: $(this), collision: "fit" } );
 //	});
@@ -77,6 +77,7 @@ $o8r2=0;
 $o12=0;
 $o12r2=0;
 $o16=0;
+$o19=0;
 $linux=0;
 
 $stmt = sqlsrv_query( $conn, $tsql);
@@ -92,7 +93,8 @@ while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC))
 
 	if ($row['ostype'] == "2016") { echo "<img src=\"images/server2016.gif\">"; $o16+=$row['count']; }
 		
-
+    if ($row['ostype'] == "2019") { echo "<img src=\"images/server2016.gif\">"; $o19+=$row['count']; }
+	
 	if ($row['ostype'] == "2012") { 
 		echo "<img src=\"images/server2012.gif\">";
 		if (strpos($row['osInfo'],'R2 ')!==false) { $o12r2+=$row['count']; } else { $o12+=$row['count']; }
@@ -150,6 +152,7 @@ if ($o8r2>0) { $datax[] = "['2008 R2', ".$o8r2."]"; }
 if ($o12>0) { $datax[] = "['2012', ".$o12."]"; }
 if ($o12r2>0) { $datax[] = "['2012 R2', ".$o12r2."]"; }
 if ($o16>0) { $datax[] = "['2016', ".$o16."]"; }
+if ($o19>0) { $datax[] = "['2019', ".$o19."]"; }
 if ($linux>0) {$datax[] = "['Linux', ".$linux."]"; }
 
 
