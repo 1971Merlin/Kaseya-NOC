@@ -13,6 +13,7 @@ if ($usescopefilter==true) { $tsql2.=" join vdb_Scopes_Machines foo on (foo.agen
 if ($org_filter!="Master") { $tsql2.=" 
  join dbo.DenormalizedOrgToMach on avf.agentGuid = dbo.DenormalizedOrgToMach.AgentGuid
   and dbo.DenormalizedOrgToMach.OrgId = (select id from kasadmin.org where kasadmin.org.ref = '".$org_filter."')"; }
+  $tsql2.=" where InstallStatus=1";
  
 
  $tsql3 = "select count (distinct avf.agentGuid) as count

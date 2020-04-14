@@ -45,7 +45,7 @@ echo "</div>";
 
 echo "<div class=\"datatable\">";
 echo "<table id=\"lowdisklist\">";
-echo "<tr><th class=\"colL\">Machine Name</th><th class=\"colM\">Drive</th><th class=\"colL\">Label</th><th class=\"colR\">Free Space</th><th class=\"colR\">Total Space</th><th class=\"colM\">Free Space %</th><th class=\"colM\">Urgency</th></tr>";
+echo "<tr><th class=\"colL\">Machine Name</th><th class=\"colM\">Drive</th><th class=\"colL\">Volume Label</th><th class=\"colR\">Free Space</th><th class=\"colR\">Total Space</th><th class=\"colM\">Free Space %</th></tr>";
 
 
 while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC))
@@ -58,7 +58,10 @@ while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC))
   echo "&nbsp;".$row['MachineName']."</td>";
   
   
-  echo "<td class=\"colM\">".$row['DriveLetter'].":</td>";
+  $color = "black";
+  if ($row['DriveLetter'] == "C") { $color="red"; };
+  
+  echo "<td class=\"colM\"><font color=\"".$color."\">".$row['DriveLetter'].":</font></td>";
 
   echo "<td class=\"colL\">".$row['VolumeName']."</td>";
   
@@ -88,7 +91,8 @@ while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC))
 
   } else { echo $perc."%</td>"; }
 
-  echo "<td class=\"colM\">".$row['rank']."</td></tr>";
+//  echo "<td class=\"colM\">".$row['rank']."</td></tr>";
+  echo "</tr>";
 }
 echo "</table>";
 echo "</div>";

@@ -16,7 +16,7 @@ $dtime=time();
 echo "<object data={$exturl}?ver={$dtime} width=\"100%\" height=\"auto\"> <embed src={$exturl}?ver={$dtime}> </embed> Error: Embedded data could not be displayed. </object>";
 
 // iframe method
-// echo "<iframe src=\"{$exturl}?ver={$dtime}\" width=\"100%\" frameborder=\"0\" scrolling=\"yes\"></iframe>";
+// echo "<iframe src=\"{$exturl}?ver={$dtime}\" width=\"100%\" height=\"100%\" frameborder=\"0\" scrolling=\"auto\"></iframe>";
 
 echo "</div>";
 

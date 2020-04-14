@@ -135,6 +135,7 @@ if (isset($_POST['org']))  $config['config']['org_filter']=$_POST['org']; else  
  if (isset($_POST['alarm'])) $config['panels']['showAlarms']="1"; else $config['panels']['showAlarms']="0";
  if (isset($_POST['uptime'])) $config['panels']['showUptime']="1"; else $config['panels']['showUptime']="0";
  if (isset($_POST['patching'])) $config['panels']['showPatching']="1"; else $config['panels']['showPatching']="0";
+ if (isset($_POST['sm'])) $config['panels']['showSM']="1"; else $config['panels']['showSM']="0";
  if (isset($_POST['lowdisk'])) $config['panels']['showLowDisk']="1"; else $config['panels']['showLowDisk']="0";
  if (isset($_POST['RCinfo'])) $config['panels']['showRC']="1"; else $config['panels']['showRC']="0";
  if (isset($_POST['SEC'])) $config['panels']['showSEC']="1"; else $config['panels']['showSEC']="0";
@@ -209,6 +210,7 @@ if (!isset($config['panels']['showSEP'])) { $config['panels']['showSEP'] = true;
 if (!isset($config['panels']['showAlarms'])) { $config['panels']['showAlarms'] = true; }
 if (!isset($config['panels']['showUptime'])) { $config['panels']['showUptime'] = true; }
 if (!isset($config['panels']['showPatching'])) { $config['panels']['showPatching'] = true; }
+if (!isset($config['panels']['showSM'])) { $config['panels']['showSM'] = true; }
 if (!isset($config['panels']['showLowDisk'])) { $config['panels']['showLowDisk'] = true; }
 if (!isset($config['panels']['showRC'])) { $config['panels']['showRC'] = true; }
 if (!isset($config['panels']['showSEC'])) { $config['panels']['showSEC'] = true; }
@@ -455,25 +457,32 @@ id	ref						version
 29	Desktop Management: Migration	8.0.0.0
 30	Desktop Management: Policy	8.0.0.0
 31	Network Discovery		1.2.0.0
+34	Data Backup
 36	Anti-Virus (classic)	8.0.0.0 (KAV aka Kaspersky)
 41	Time Tracking			8.0.0.0
 42	Service Billing			8.0.0.0
 44	Policy					8.0.0.0
 46	Anti-Malware (classic)	8.0.0.0 (KAM aka Malwarebytes)
 47	Network Monitoring		8.0.0.0 (KNMi)
-50	KMDM					8.0.0.0 (Mobile management)
+50	KMDM					8.0.0.0 (Mobile management, named mobility in 9.4)
 53	Software Deployment
-54	Cloud Backup			9.4.0.0 (KCB aka Acronis Cloudnew to 9.4)
+54	Cloud Backup			9.4.0.0 (KCB aka Acronis Cloud, new to 9.4)
 60	KSBR					
+60	Software Management		9.4.0.13 (new to 9.4.0.13, offical release 9.5)
+64	System Backup and Recovery
 70	Discovery				8.0.0.0 (KND)
 85	vPro Management			8.0.0.0
-95	Anti-Virus (Kaspersky, new to 9.3)
-97	Anti-Malware ( new to 9.3)
-115	AuthAnvil
+95	Antivirus 				(Kaspersky, new to 9.3)
+97	Anti-Malware 			( new to 9.3)
+105 Gen-l					1.0.0.0
+115	AuthAnvil				4.4.0.0
+120	Replay server backup
+127	MSPAsssit				1.0.0.0
 134	Veeam Backup & Replication	1.0.0.0
 135	Symantec Integration	2.5.1.13 (SEP aka Symantec Endpoint Security)
 138	ESET					2.4.0.0
-
+160	Webroot					2.1.0.0
+163	TrendMicro				5.8.0.1
 */
 
 ?>
@@ -573,11 +582,11 @@ function toggle(className,parentState){
 </table>
 
 
-<label for="VSAUsers">External URL</label>
+<label for="EXTURL">External URL</label>
 <input type="checkbox" name="showEXT" class="list1" <?php if($config['strip']['showEXT']==true){echo "checked";} ?>>
 <input type="text" name="extURL" size="80" maxlength="255" value="<?php echo $config['strip']['extURL'];?>">
 <br/>
-<label for="VSAUsers">External RSS Feed</label>
+<label for="EXTRSS">External RSS Feed</label>
 <input type="checkbox" name="showRSS" class="list1" <?php if($config['strip']['showRSS']==true){echo "checked";} ?>>
 <input type="text" name="rssURL" size="80" maxlength="255" value="<?php echo $config['strip']['rssURL'];?>">
 <br/>
@@ -641,6 +650,14 @@ function toggle(className,parentState){
 <label for="patch">Patch Management</label>
 <?php $res=findProduct($lic_data,6);?>
 <input type="checkbox" name="patching" class='list2' <?php if($config['panels']['showPatching']==true){echo "checked";} if ($res==null) {echo " disabled";} ?>>
+</td><td>
+<?php if ($res!=null) { echo $lic_data[$res]['ref']."</td><td class=\"colM\">".$lic_data[$res]['version']; }  else { echo 'Not Installed</td><td>'; } ?>
+</td></tr>
+
+<tr><td>
+<label for="patch">Software Management</label>
+<?php $res=findProduct($lic_data,60);?>
+<input type="checkbox" name="sm" class='list2' <?php if($config['panels']['showSM']==true){echo "checked";} if ($res==null) {echo " disabled";} ?>>
 </td><td>
 <?php if ($res!=null) { echo $lic_data[$res]['ref']."</td><td class=\"colM\">".$lic_data[$res]['version']; }  else { echo 'Not Installed</td><td>'; } ?>
 </td></tr>

@@ -10,6 +10,9 @@ include 'dblogin.php';
 
 // failed backups
 // logic is if last backup ID and lastSuccessful backup ID != then last backup must have failed.
+//
+// replaced!! Think the logic is very poor here.
+/*
 $tsql = "SELECT st.displayName as machName, aal.title as lastTitle, aal.cause as lastCause, aal.reason as lastReason, aal.effect as lastEffect, aal.startTime as lastStartTime, aal.finishTime as lastFinishTime, aal.status as lastStatus,
  isnull(a.sqlComponent,0) as sql, isnull(a.exchangeComponent,0) as exchange, isnull(a.activedirectoryComponent,0) as AD, isnull(a.vmwareComponent,0) as VMWare, isnull(a.hypervComponent,0) as HyperV, st.online, st.currentLogin
  from vAgentLabel as st ";
@@ -22,12 +25,30 @@ $tsql = "SELECT st.displayName as machName, aal.title as lastTitle, aal.cause as
  LEFT OUTER JOIN KCB.AcronisActivity AS aas ON a.lastSuccessfulActivityId = aas.id
  LEFT OUTER JOIN KCB.AcronisActivity AS aal ON a.lastActivityId = aal.id
  WHERE (a.installStatusDomainItemRef = 'KCB_InstallStatus_Installed') and aas.id != aal.id and aal.finishTime is NOT NULL";
+*/
+
+
+$tsql = "SELECT st.displayName as machName, aal.title as lastTitle, aal.cause as lastCause, aal.reason as lastReason, aal.effect as lastEffect, aal.startTime as lastStartTime, aal.finishTime as lastFinishTime, aal.status as lastStatus,
+ isnull(a.sqlComponent,0) as sql, isnull(a.exchangeComponent,0) as exchange, isnull(a.activedirectoryComponent,0) as AD, isnull(a.vmwareComponent,0) as VMWare, isnull(a.hypervComponent,0) as HyperV, st.online, st.currentLogin
+ from vAgentLabel as st ";
+ if ($usescopefilter==true) { $tsql.=" join vdb_Scopes_Machines foo on (foo.agentGuid = st.agentGuid and foo.scope_ref = '".$scope_filter."')"; }
+ if ($org_filter!="Master") { $tsql.=" 
+ join dbo.DenormalizedOrgToMach on st.agentGuid = dbo.DenormalizedOrgToMach.AgentGuid
+ and dbo.DenormalizedOrgToMach.OrgId = (select id from kasadmin.org where kasadmin.org.ref = '".$org_filter."')"; }
+ $tsql.="
+ inner join KCB.Asset AS a ON st.agentGuid = a.agentGuid
+ LEFT OUTER JOIN KCB.AcronisActivity AS aal ON a.lastActivityId = aal.id
+ WHERE aal.status != 'ok' and aal.finishTime is NOT NULL";
+
+
+
+$tsql2 = "SELECT MAX( case when name like 'LastTimeActivityHarvesterRan' then value end) as value,
+ MAX( case when name like 'AcronisWindowsInstallerVersion' then value end) as winver,
+ MAX( case when name like 'AcronisMacOSXInstallerVersion' then value end) as macver
+ from KCB.Setting"; /* value returned is varchar not DateTime */
+
  
-
-$tsql2 = "SELECT value from KCB.Setting where name like 'LastTimeActivityHarvesterRan'"; /* value returned is varchar not DateTime */
-
 $tsql2a = "select kcb.fnGetCloudBackupExpiryDate(1) as expiry, kcb.fnGetCloudBackupVMLicenseCount(1) as vmcount, kcb.fnGetCloudBackupServerLicenseCount(1) as servercount, KCB.fnGetCloudBackupWSLicenseCount(1) as wscount, * from KCB.vAssetTypeSummaryDataSet";
-
 
 // last successful backup
 // get last successful ID and report on it
@@ -63,6 +84,24 @@ aas.bytesSaved, aas.bytesProcessed, isnull(a.sqlComponent,0) as sql, isnull(a.ex
  order by lastStartTime desc";
   
 
+// storagestats
+
+$tsql5 = "SELECT bg.groupName, CASE
+	WHEN isnull(CloudStorageType, 0) = 0 THEN 'Combined'
+	WHEN isnull(CloudStorageType, 0) = 1 THEN 'Cloud'
+	WHEN isnull(CloudStorageType, 0) = 2 THEN 'Gateway' END
+AS CloudStorageType, CEILING(CAST(ash.spaceUsed AS decimal) / 1073741824) AS Usage, dateCreated
+FROM KCB.AcronisStorageHistory AS ash
+INNER JOIN KCB.BackupGroup AS bg ON bg.id = ash.backupGroupId
+
+where ash.dateCreated = (select max(ash2.datecreated) from KCB.AcronisStorageHistory ash2 where ash2.backupGroupId = bg.id)
+
+order by Usage desc";
+
+
+  
+  
+  
 
 $stmt = sqlsrv_query( $conn, $tsql);
 if( $stmt === false )
@@ -86,7 +125,6 @@ if( $stmt2a === false )
 }
 
 
-
 $stmt3 = sqlsrv_query( $conn, $tsql3);
 if( $stmt3 === false ){
      echo "Error in executing query.<br/>";
@@ -103,21 +141,20 @@ if( $stmt4 === false )
 }
 
 
+$stmt5 = sqlsrv_query( $conn, $tsql5);
+if( $stmt5 === false )
+{
+     echo "Error in executing query.<br/>";
+     die( print_r( sqlsrv_errors(), true));
+}
 
-echo "<div class=\"heading heading2\">";
+
+echo "<div class=\"heading\">";
 Echo "<image src=\"images/acro-cloud.png\" style=\"vertical-align:middle\"> Cloud Backup Status";
 echo "</div>";
 
 
-$row2 = sqlsrv_fetch_array( $stmt2, SQLSRV_FETCH_ASSOC);
-
-$valu = new DateTime($row2['value']);
-$dispdate = (isset($row2['value']) ? date($datestyle." ".$timestyle,$valu->getTimestamp()) : 'Never');
-
 $row2a = sqlsrv_fetch_array( $stmt2a, SQLSRV_FETCH_ASSOC);
-
-
-
 
 echo "<div class=\"datatable2\">";
 echo "<table id=\"cloudinfolicstats\">";
@@ -131,18 +168,55 @@ echo "</table>";
 echo "</div>";
 
 
+
+$row2 = sqlsrv_fetch_array( $stmt2, SQLSRV_FETCH_ASSOC);
+$valu = new DateTime($row2['value']);
+$dispdate = (isset($row2['value']) ? date($datestyle." ".$timestyle,$valu->getTimestamp()) : 'Never');
+
+
 echo "<div class=\"datatable2\">";
 echo "<table id=\"cloudinfostats\">";
 echo "<caption class=\"heading3\">Statistics</caption>";
 echo "<tr><td>Data last retrieved</td><td>".$dispdate."</td></tr>";
+echo "<tr><td>Windows Client version</td><td>".$row2['winver']."</td></tr>";
+echo "<tr><td>Mac Client version</td><td>".$row2['macver']."</td></tr>";
 echo "</table>";
 echo "</div>";
 
 
+echo "<div class=\"datatable2\">";
+echo "<table id=\"cloudspaceused\">";
+echo "<caption class=\"heading3\">Storage Stats</caption>";
+echo "<tr><th>Group</th><th>Storage Used</th><th>Storage Type</th></tr>";
 
+
+while( $row5 = sqlsrv_fetch_array( $stmt5, SQLSRV_FETCH_ASSOC))
+{
+
+  
+  echo "<tr><td>".$row5['groupName']."</td><td  class=\"colM\">".$row5['Usage']." Gb</td><td class=\"colM\">".$row5['CloudStorageType']."</td>";
+  
+  
+  echo "<td class=\"colM\">{$row5['dateCreated']->format($datestyle." ".$timestyle)}</td></tr>";
+  
+
+  
+  
+  
+  
+//  ".date($datestyle." ".$timestyle,$row5['dateCreated']->getTimestamp())."
+  
+}
+
+echo "</table>";
+echo "</div>";
 
 //* spacer *//
 echo "<div class=\"spacer\"></div>";
+
+
+
+
 
 echo "<div class=\"heading heading2\">";
 echo "Endpoints with Errors";
@@ -182,7 +256,10 @@ while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC))
 
   echo "<td class=\"colM\"><font color=\"".$color."\">".$row['lastStatus']."</font></td>";
 
-  echo "<td class=\"colL\">".$row['lastCause']."</td>";
+  echo "<td class=\"colL\">".substr($row['lastCause'],0,20);
+  if (strlen($row['lastCause'])>=20) { echo '...'; }
+  echo "</td>";
+ 
  
  echo "</tr>";
  }

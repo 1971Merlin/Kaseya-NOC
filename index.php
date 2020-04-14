@@ -8,19 +8,23 @@
 <meta name="viewport" content="width=device-width, initial-scale=1,  user-scalable=yes" />
 
 <!-- jquery libraries -->
-<script src="jquery-1.12.1.min.js" type="text/javascript"></script>
+<script src="jquery-3.3.1.min.js" type="text/javascript"></script>
 
 <!-- cookie library -->
 <script src="jcookie1.4.1/jquery.cookie.js"></script>
 
 <!-- charting libraries -->
-<script src="highcharts4.2.3/js/highcharts.js"></script>
-<script src="highcharts4.2.3/js/highcharts-3d.js"></script>
-<script src="highcharts4.2.3/js/highcharts-more.js"></script>
+<script src="highcharts8.0.4/highcharts.js"></script>
+<script src="highcharts8.0.4/highcharts-3d.js"></script>
+<script src="highcharts8.0.4/highcharts-more.js"></script>
+<script src="highcharts8.0.4/modules/timeline.js"></script>
 
 <!-- Jquery UI library -->
-<link rel="stylesheet" type="text/css" href="jquery-ui-1.11.4/themes/smoothness/jquery-ui.css">
-<script src="jquery-ui-1.11.4/jquery-ui.js" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" href="jquery-ui-1.12.1/jquery-ui.css">
+<script src="jquery-ui-1.12.1/jquery-ui.js" type="text/javascript"></script>
+
+
+
 
 <!-- must load my stylesheet last, to alter jQuery defaults -->
 <link rel="stylesheet" type="text/css" href="main.css">
@@ -225,11 +229,17 @@
 
  <!-- second row: the rest of the panels that can be repositioned -->
 <div class="row2" id="row2">
+
+<!-- <div id="UptimeChart" class="panel"></div> -->
+
+
+
 <?php if ($config['panels']['showCounts'] == true) { echo "<div id=\"agenttypes\" class=\"panel\"></div>"; } ?>
 <?php if ($config['panels']['showRC'] == true) { echo "<div id=\"RCinfo\" class=\"panel\"></div>"; } ?>
 <?php if ($config['panels']['showUptime'] == true) { echo "<div id=\"uptime\" class=\"panel\"></div>"; } ?>
 <?php if ($config['panels']['showMGS'] == true) { echo "<div id=\"dotstatus\" class=\"panel\"></div>"; } ?>
 <?php if ($config['panels']['showPatching'] == true) { echo "<div id=\"patching\" class=\"panel\"></div>"; } ?>
+<?php if ($config['panels']['showSM'] == true) { echo "<div id=\"sm\" class=\"panel\"></div>"; } ?>
 <?php if ($config['panels']['showAlarms'] == true) { echo "<div id=\"alarms\" class=\"panel\"></div>"; } ?>
 <?php if ($config['panels']['showPolicy'] == true) { echo "<div id=\"policy\" class=\"panel\"></div>"; } ?>
 <?php if ($config['panels']['showSD'] == true) { echo "<div id=\"sdesk\" class=\"panel\"></div>"; } ?>
@@ -343,10 +353,14 @@ function refreshdiv2() {
 <?php if ($config['strip']['showEXT'] == true) { echo "loadpanel(\"#extdetails\",\"getExternalURL.php\");"; } ?>		
 <?php if ($config['strip']['showRSS'] == true) { echo "loadpanel(\"#rssdetails\",\"getRSSFeed.php\");"; } ?>
 
+
+loadpanel("#UptimeChart","getUptimeChart.php");
+
 <?php if ($config['panels']['showCounts'] == true) { echo "loadpanel(\"#agenttypes\",\"getAgentTypeCounts.php\");"; } ?>
 <?php if ($config['panels']['showUptime'] == true) { echo "loadpanel(\"#uptime\",\"getUptime.php\");"; } ?>
 <?php if ($config['panels']['showMGS'] == true) { echo "loadpanel(\"#dotstatus\",\"getDotStatus.php\");"; } ?>
 <?php if ($config['panels']['showPatching'] == true) { echo "loadpanel(\"#patching\",\"getPatchInfo.php\");"; } ?>
+<?php if ($config['panels']['showSM'] == true) { echo "loadpanel(\"#sm\",\"getSMInfo.php\");"; } ?>
 <?php if ($config['panels']['showAlarms'] == true) { echo "loadpanel(\"#alarms\",\"getalarms.php\");"; } ?>
 <?php if ($config['panels']['showPolicy'] == true) { echo "loadpanel(\"#policy\",\"getPolicy.php\");"; } ?>
 <?php if ($config['panels']['showSD'] == true) { echo "loadpanel(\"#sdesk\",\"getSDtickets.php\");"; } ?>

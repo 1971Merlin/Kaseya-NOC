@@ -178,6 +178,9 @@ if (chartSVR) chartSVR.destroy();
 chartSVR = new Highcharts.Chart({
 
 chart: {
+borderColor:"#f0f0f0",
+borderRadius:"3",
+borderWidth:"1",
 renderTo: 'serverOsGraph',
 type: 'pie',
 options3d: {
@@ -185,15 +188,16 @@ enabled: false,
 alpha: 45,
 beta: 0,
 },
-height: 250,
-width: 250,	
+height: 300,
+width: 240,	
 margin: [0, 0, 0, 0],
 },
 tooltip: { enabled: true },
 
 legend: {
 enabled: true,
-align: 'left',
+align: 'center',
+floating:false,
 labelFormat: '<b>{name}</b> ({percentage:.1f}%)',
 verticalAlign: 'top',
 layout: 'vertical',
@@ -207,7 +211,7 @@ backgroundColor: '#f0f0f0'
 
 plotOptions: {
 pie: {
-center: ['50%','65%'],
+center: ['50%','75%'],
 animation: false,
 depth: 25,
 dataLabels: {
@@ -357,6 +361,9 @@ if (chartWS) chartWS.destroy();
 chartWS = new Highcharts.Chart({
 
 chart: {
+borderColor:"#f0f0f0",
+borderRadius:"3",
+borderWidth:"1",
 renderTo: 'wsOsGraph',
 type: 'pie',
 options3d: {
@@ -364,16 +371,16 @@ enabled: false,
 alpha: 45,
 beta: 0,
 			},
-height: 250,
-width: 320,	
-margin: [0, 0, 0, 0],
+height: 300,
+width: 240,	
+margin: [2, 2, 2, 2],
 		},
 		
 tooltip: { enabled: true },
 		
 legend: {
 enabled: true,
-align: 'left',
+align: 'center',
 labelFormat: '<b>{name}</b> ({percentage:.1f}%)',
 verticalAlign: 'top',
 layout: 'vertical',
@@ -387,11 +394,11 @@ backgroundColor: '#f0f0f0'
 
 plotOptions: {
 pie: {
-center: ['65%','65%'],
+center: ['50%','75%'],
 animation: false,
 depth: 25,
 dataLabels: {
-connectorPadding: 10,
+connectorPadding: 1,
 distance: 15,
 enabled: true,
 format: '<b>{point.name}</b> : {point.y}',

@@ -46,7 +46,6 @@ table {
 	font-weight: bold;
 	width: 100%;
 	white-space: nowrap;
-	padding: 0px 0px 0px 2px;
 	}
 
 
@@ -57,10 +56,13 @@ table {
   vertical-align: top;
 }
 
+
 /* for a row of info DIVs side by side */
 .datatable2 {
-	display: inline-block;
+	float: left;
+	clear: none;
 	vertical-align: top;
+	margin: 0px 0px 0px 10px;
 }
 
 /* justify headings & data */
@@ -239,6 +241,7 @@ border-top: 1px solid gray;
  color: blue;
  padding: 2px 2px 2px 0px;
  margin-bottom: 2px;
+ text-align: left;
  }
 
 
@@ -404,7 +407,18 @@ text-decoration: none;
 
 .graph {
  float:left;
- clear:both;
+ clear:left;
+}
+
+
+.graphL {
+ float:left;
+ clear:left;
+}
+
+.graphR {
+ float:right;
+ clear:right;
 }
 
 

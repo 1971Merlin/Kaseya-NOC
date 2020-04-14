@@ -26,7 +26,18 @@ if ($org_filter!="Master") { $tsql.="
   $tsql.=" join vAgentLabel vl on vl.agentGuid = vppm.agentGuid
   join vPatchStatusByAgent pp on pp.agentGuid = vppm.agentGuid
   where PolicyName not like '-No policy-' and (missingApproved >0 or failed >0)
-  order by rebootPending desc, failed desc, missingApproved desc, pending desc";
+  order by missingApproved desc, rebootPending desc,  failed desc,  pending desc";
+  
+  
+$tsql2 = "SELECT distinct count (agentGuid) as Count, Category FROM vPatchPieChartCountsUsePolicy where osinformation like '%server%'
+ group by category order by Count asc";
+ 
+
+ 
+$tsql3 = "SELECT distinct count (agentGuid) as Count, Category FROM vPatchPieChartCountsUsePolicy where osinformation not like '%server%'
+ group by category order by Count asc";
+  
+  
 ?>
 <div id="patchdialog"></div>
 <script type="text/javascript">
@@ -62,11 +73,309 @@ if( $stmt === false )
      die( print_r( sqlsrv_errors(), true));
 }
 
+  
+ //start chart
+ 
+  
+  $datax = array();
+  $datay = array();
+  
+$stmt2 = sqlsrv_query( $conn, $tsql2);
+if( $stmt2 === false )
+{
+     echo "Error in executing query.<br/>";
+     die( print_r( sqlsrv_errors(), true));
+}
+
+$stmt3 = sqlsrv_query( $conn, $tsql3);
+if( $stmt3 === false )
+{
+     echo "Error in executing query.<br/>";
+     die( print_r( sqlsrv_errors(), true));
+}
+
+
+$colorlist = array();
+
+
+while( $row2 = sqlsrv_fetch_array( $stmt2, SQLSRV_FETCH_ASSOC))
+{ 
+  $foo = $row2['Category'];
+  $foo = str_replace('Missing Patches: 0','Fully Patched',$foo);
+  $foo = str_replace('Missing Patches:','Missing:',$foo);
+  $datax[] = "['".$foo."',".$row2['Count']."]";
+
+
+  switch ($foo) {
+	  
+
+        case 'OS Not Supported' : $colorlist[] = '#000066'; break;	// blue
+		case 'Not Scanned' : $colorlist[] = '#c2c2a3'; break;		// grey
+		case 'Missing: 6 or more' : $colorlist[] = '#ff0000'; break;	// red
+		case 'Missing: 3 - 5' : $colorlist[] = '#ff6600'; break;	// orange
+		case 'Missing: 1 - 2' : $colorlist[] = '#ffff00'; break;	// yellow
+		case 'Fully Patched' : $colorlist[] = '#009900'; break;		// green
+			}
+
+
+
+}
+
+			
+
+$colorlist2 = array();			
+			
+while( $row3 = sqlsrv_fetch_array( $stmt3, SQLSRV_FETCH_ASSOC))
+{ 
+  $foo = $row3['Category'];
+  $foo = str_replace('Missing Patches: 0','Fully Patched',$foo);
+  $foo = str_replace('Missing Patches:','Missing:',$foo);
+  $datay[] = "['".$foo."',".$row3['Count']."]";
+  
+ switch ($foo) {
+	  
+
+        case 'OS Not Supported' : $colorlist2[] = '#000066'; break;	// blue
+		case 'Not Scanned' : $colorlist2[] = '#c2c2a3'; break;		// grey
+		case 'Missing: 6 or more' : $colorlist2[] = '#ff0000'; break;	// red
+		case 'Missing: 3 - 5' : $colorlist2[] = '#ff6600'; break;	// orange
+		case 'Missing: 1 - 2' : $colorlist2[] = '#ffff00'; break;	// yellow
+		case 'Fully Patched' : $colorlist2[] = '#009900'; break;		// green
+			}
+
+  
+}
+
+
+
 echo "<div class=\"heading\">";
+echo "Global Patching Status";
+echo "</div>";
+
+// 
+
+echo "<div id=\"PatchSvrCountsGraph\" class=\"graphL\"></div>";
+
+echo "<div id=\"PatchWsCountsGraph\" class=\"graphR\"></div>";
+
+
+
+
+
+
+?>
+<script type="text/javascript">
+var chartSvrPatchCounts;
+
+$(document).ready(function () {
+
+	Highcharts.setOptions({
+global: {
+useUTC: false
+		},
+credits: {
+enabled: false
+		}
+	});	
+
+if (chartSvrPatchCounts) chartSvrPatchCounts.destroy();
+
+chartSvrPatchCounts = new Highcharts.Chart({
+
+chart: {
+renderTo: 'PatchSvrCountsGraph',
+type: 'pie',
+height: 150,
+width: 400,	
+margin: [0, 0, 0, 0],
+},
+
+tooltip: { enabled: true },
+
+ 
+
+legend: {
+enabled: true,
+align: 'left',
+labelFormat: '<b>{name}</b> {y}',
+verticalAlign: 'middle',
+layout: 'vertical',
+symbolHeight: 9,
+itemStyle: { fontSize: '9px', fontWeight: 'normal' },
+margin: 0,
+borderWidth: 1,
+borderRadius: 3,
+backgroundColor: '#f0f0f0'
+},
+
+
+ 
+
+plotOptions: {
+        pie: {
+            animation: false,
+			showInLegend: true,
+			allowPointSelect: false,
+			dataLabels: {
+                format: '{point.y}',
+				enabled: true,
+				distance: -25,
+                style: {
+                    fontWeight: 'bold',
+                    color: 'white'
+                }
+            },
+            startAngle: -90,
+            endAngle: 90,
+            center: ['75%', '80%'],
+            size: '150%',
+			colors: [<?php foreach($colorlist as $item) { echo "'$item',"; }; ?>]
+        }
+    },
+	
+	
+	
+	
+    title: {
+        text: 'Server Patch Counts',
+		useHTML: true,
+        align: 'center',
+        verticalAlign: 'middle',
+		y: 60,
+		x: 80,
+		style: {
+             fontWeight: 'bold',
+            color: 'black',
+        fontFamily: 'Arial,Helvetica,sans-serif',
+    fontSize: '14px',
+	}
+ 
+    },	
+	
+
+series: [{
+name: '',
+  innerSize: '40%',
+data: [<?php echo join($datax, ',') ?>],
+
+		}]
+	})
+});
+</script>
+<?php 
+
+
+
+
+?>
+<script type="text/javascript">
+var chartWsPatchCounts;
+
+$(document).ready(function () {
+
+	Highcharts.setOptions({
+global: {
+useUTC: false
+		},
+credits: {
+enabled: false
+		}
+	});	
+
+if (chartWsPatchCounts) chartWsPatchCounts.destroy();
+
+chartWsPatchCounts = new Highcharts.Chart({
+
+chart: {
+renderTo: 'PatchWsCountsGraph',
+type: 'pie',
+height: 150,
+width: 400,	
+margin: [0, 0, 0, 0],
+},
+
+tooltip: { enabled: true },
+
+ 
+
+legend: {
+enabled: true,
+align: 'left',
+labelFormat: '<b>{name}</b> {y}',
+verticalAlign: 'middle',
+layout: 'vertical',
+symbolHeight: 9,
+itemStyle: { fontSize: '9px', fontWeight: 'normal' },
+margin: 0,
+borderWidth: 1,
+borderRadius: 3,
+backgroundColor: '#f0f0f0'
+},
+
+
+ 
+
+plotOptions: {
+        pie: {
+            animation: false,
+			showInLegend: true,
+			allowPointSelect: false,
+			dataLabels: {
+                format: '{point.y}',
+				enabled: true,
+				distance: -25,
+                style: {
+                    fontWeight: 'bold',
+                    color: 'white'
+                }
+            },
+            startAngle: -90,
+            endAngle: 90,
+            center: ['75%', '80%'],
+            size: '150%',
+			colors: [<?php foreach($colorlist2 as $item) { echo "'$item',"; }; ?>]
+		}
+    },
+	
+	
+	
+	
+    title: {
+        text: 'Workstation Patch Counts',
+		useHTML: true,
+        align: 'center',
+        verticalAlign: 'middle',
+		y: 60,
+		x: 80,
+		style: {
+             fontWeight: 'bold',
+            color: 'black',
+        fontFamily: 'Arial,Helvetica,sans-serif',
+    fontSize: '14px',
+	}
+ 
+    },	
+	
+
+series: [{
+name: '',
+  innerSize: '40%',
+data: [<?php echo join($datay, ',') ?>],
+
+		}]
+	})
+});
+</script>
+<?php 
+
+//end chart
+
+
+
+echo "<div class=\"heading heading2\">";
 echo "Patching Status (Patch Policy Members)";
 echo "<div class=\"topn\">showing first ".$resultcount."</div>";
 echo "</div>";
-
 
 
 echo "<div class=\"datatable\">";
@@ -117,10 +426,13 @@ while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC))
 	$post="</i>";
   }
   
-  echo $pre.$row['testStatusDescription'].$post."</td></tr>";
+  echo $pre.substr($row['testStatusDescription'],0,15);
+  if (strlen($row['testStatusDescription'])>=15) { echo '...'; }
+  echo $post."</td></tr>";
 }
 echo "</table>";
 echo "</div>";
+
 
 
 //* spacer *//
@@ -143,7 +455,7 @@ if ($org_filter!="Master") { $tsql.="
   and dbo.DenormalizedOrgToMach.OrgId = (select id from kasadmin.org where kasadmin.org.ref = '".$org_filter."')"; }
   $tsql.=" join vAgentLabel vl on vl.agentGuid = vPatchPolicyMember.agentGuid
   join vPatchStatusByAgent pp on pp.agentGuid = vPatchPolicyMember.agentGuid
-  where PolicyName = '-No policy-' and (vPatchPolicyMember.OperatingSystem like 'Windows%')
+  where PolicyName = '-No policy-' and (vPatchPolicyMember.OperatingSystem like 'Windows%') and lastPatchScan is not null
   order by rebootPending desc, failed desc, missingApproved desc, pending desc";
 
    

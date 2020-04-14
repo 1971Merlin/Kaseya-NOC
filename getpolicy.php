@@ -69,8 +69,128 @@ $numOK=$numin - $numovr - $numout; // agent is in compliance and has no override
 
 echo "<div class=\"heading\">Policy Compliance</div>";
 
-//* spacer *//
-echo "<div class=\"spacer\"></div>";
+
+$dataxx = array();
+
+$dataxx[] = "['No Policy',$nopolicy]";
+$dataxx[] = "['Deploying',$numpnd]";
+$dataxx[] = "['Out of Compliance',$numout]";
+$dataxx[] = "['Override',$numovr]";
+$dataxx[] = "['Compliant',$numOK]";
+
+
+
+echo "<div id=\"PolicyComplianceGraph\" class=\"graph\"></div>";
+
+
+
+?>
+<script type="text/javascript">
+var chartPolicyCounts;
+
+$(document).ready(function () {
+
+	Highcharts.setOptions({
+global: {
+useUTC: false
+		},
+credits: {
+enabled: false
+		}
+	});	
+
+if (chartPolicyCounts) chartPolicyCounts.destroy();
+
+chartPolicyCounts = new Highcharts.Chart({
+
+chart: {
+renderTo: 'PolicyComplianceGraph',
+type: 'pie',
+height: 150,
+width: 400,	
+margin: [0, 0, 0, 0],
+},
+
+tooltip: { enabled: true },
+
+ 
+
+legend: {
+enabled: true,
+align: 'left',
+labelFormat: '<b>{name}</b> {y}',
+verticalAlign: 'middle',
+layout: 'vertical',
+symbolHeight: 9,
+itemStyle: { fontSize: '9px', fontWeight: 'normal' },
+margin: 0,
+borderWidth: 1,
+borderRadius: 3,
+backgroundColor: '#f0f0f0'
+},
+
+
+ 
+
+plotOptions: {
+        pie: {
+            animation: false,
+			showInLegend: true,
+			allowPointSelect: false,
+			dataLabels: {
+                format: '{point.y}',
+				enabled: true,
+				distance: -25,
+                style: {
+                    fontWeight: 'bold',
+                    color: 'white',
+					textoutline: "1px contrast"
+                }
+            },
+            startAngle: -90,
+            endAngle: 90,
+            center: ['75%', '80%'],
+            size: '150%',
+			colors: ['#000066','#c2c2a3','#ff0000','#ff6600','#009900']
+        }
+    },
+	
+	
+	
+	
+    title: {
+        text: 'Policy Complaince Counts',
+		useHTML: true,
+        align: 'center',
+        verticalAlign: 'middle',
+		y: 60,
+		x: 80,
+		style: {
+             fontWeight: 'bold',
+            color: 'black',
+        fontFamily: 'Arial,Helvetica,sans-serif',
+    fontSize: '14px',
+	}
+ 
+    },	
+	
+
+series: [{
+name: '',
+  innerSize: '40%',
+data: [<?php echo join($dataxx, ',') ?>],
+
+		}]
+	})
+});
+</script>
+<?php 
+//end chart
+
+
+
+/*
+
 
 // in
 echo "<div class=\"minibox\">";
@@ -122,9 +242,20 @@ echo "<div class=\"minibox\">";
 echo "</div>";
    
  
+*/
+ 
 // if override or not compliant >0, list them...
 if ($numovr<>0 or $numout<>0) {
-  
+ 
+
+
+echo "<div class=\"heading heading2\">";
+echo "Policy Compliance Detail";
+echo "<div class=\"topn\">showing first ".$resultcount."</div>";
+echo "</div>";
+
+
+ 
   $stmt = sqlsrv_query( $conn, $tsql);
   if( $stmt === false )
   {
@@ -135,13 +266,29 @@ if ($numovr<>0 or $numout<>0) {
   echo "<table id=\"pollist\">";
   echo "<tr><th class=\"colL\">Machine Name</th><th class=\"colL\">Policy</th><th class=\"colM\">Status</th></tr>";
  
+ 
+ $ico="";
+ 
   while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC))
   {
     echo "<tr><td class=\"colL\">";
     showAgentIcon($row['online'],$row['currentLogin']); 
     echo "&nbsp;".$row['MachineId']."</td>";
     echo "<td class=\"colL\">".$row['policyName']."</td>";
-    echo "<td class=\"colM\">".$row['policyStatus']."</td>";
+ 
+    switch ($row['policyStatus']) {
+		
+		case "Out of Compliance": $ico='status_red.gif'; $tooltip="Out of Compliance"; break;
+		case "Override": $ico='status_yellow.gif'; $tooltip="Override"; break;
+		case "In Complaince": $ico='status_green.gif'; $tooltip="In Compliance"; break;
+
+	    default: $ico='question.png'; $tooltip="OK";
+	}
+
+//    echo "<td class=\"colM\">".$row['policyStatus']."</td>";
+    echo "<td class=\"colM\"><img src=\"images/".$ico."\" title=\"".$tooltip."\"></td>";
+	
+
     echo "</tr>";
   }
   echo "</table>";

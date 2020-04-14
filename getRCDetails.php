@@ -37,7 +37,13 @@ if ($org_filter!="Master") { $tsql3.="
    order by startTime desc";
 
    
-   
+ // LC sessions
+ $tsql4 = "select UserName, TimeStamp, LogEntry, EventType, IPAddress, AgentName
+ FROM Agents.KLCAuditLog
+ where logEntry like 'Session started against endpoint:%' and timestamp > getdate()-1 
+ order by timestamp desc";
+ 
+
    
    
  
@@ -88,6 +94,26 @@ if ($KVer > 7 ) {
 	{
 		$rc[] = array( 'adminName' => $row['adminName'], 'time' => $row['eventTime'], 'duration' => $row['total'], 'machine' => $row['machine'], 'type' => $row['type'], 'completed' => $row['completed'] );
 	}
+	
+	
+
+	$stmt4 = sqlsrv_query( $conn, $tsql4);
+	if( $stmt4 === false )
+	{
+		echo "Error in executing query.<br/>";
+		die( print_r( sqlsrv_errors(), true));
+	}
+
+
+	while( $row = sqlsrv_fetch_array( $stmt4, SQLSRV_FETCH_ASSOC))
+	{
+		$rc[] = array( 'adminName' => $row['UserName'], 'time' => $row['TimeStamp'], 'duration' => 0, 'machine' => $row['AgentName'], 'type' =>999, 'completed' => 0);
+	}
+
+
+
+	
+	
 }
 
 
@@ -125,15 +151,20 @@ if ($KVer > 7 ) {
 
 	
 	echo "<td  class=\"colM\">";
-	if ($value['type']==1) { echo "KRC Console"; } else
-	if ($value['type']==2) { echo "KRC Private"; } else
+//	if ($value['type']==1) { echo "KRC Console"; } else
+//	if ($value['type']==2) { echo "KRC Private"; } else
+
+	if ($value['type']==1) { echo "<img src=\"images/KLCshared.png\" title=\"KRC Console\">"; } else
+	if ($value['type']==2) { echo "<img src=\"images/KLCprivate.png\" title=\"KRC Private\">"; } else
 	if ($value['type']==101) { echo "FTP"; } else
-	if ($value['type']==201) { echo "VNC"; } else
+//	if ($value['type']==201) { echo "VNC"; } else
+	if ($value['type']==201) { echo "<img src=\"images/VNCicon.gif\" title=\"kVNC\">"; } else
 	if ($value['type']==202) { echo "RAdmin"; } else
 	if ($value['type']==203) { echo "RDP"; } else
 	if ($value['type']==204) { echo "PC Anywhere"; } else
 	if ($value['type']==205) { echo "K-VNC"; } else
 	if ($value['type']==206) { echo "KRC(beta?)"; } else
+	if ($value['type']==999) { echo "<img src=\"images/liveconnect.png\" title=\"KLC\">"; } else
 	echo "Unknown ID=".$value['type'];	
     echo "</td></tr>";
 	

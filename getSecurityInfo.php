@@ -95,14 +95,16 @@ if ($org_filter!="Master") { $tsql.="
   and dbo.DenormalizedOrgToMach.OrgId = (select id from kasadmin.org where kasadmin.org.ref = '".$org_filter."')"; }
   $tsql.=") poop
   where (online>0 and online <198) and (
-    (installationstatus='Installed' and residentshield<>1)
-	or ActiveThreats>0
-	or InstallationStatus<>'Installed'
+    (installationStatus='Installed' and residentshield<>1)
+	or (ActiveThreats>0 and installationstatus='Installed')
+	or InstallationStatus='Failure'
+	or InstallationStatus='Removed by the user'
 	or ProtectionEnabled<>'Enabled'
 	or SignatureVersion not like '%".$currentAvSig."%'
   )
-  order by case when residentshield = 0 then '1' when residentshield > 1 then '2' else '3' end, ProtectionEnabled desc, ActiveThreats desc, SignatureVersion desc";
+  order by ActiveThreats desc, case when residentshield = 0 then '1' when residentshield > 1 then '2' else '3' end, ProtectionEnabled desc, SignatureVersion desc";
 
+  
 $tsql10 = "select count(distinct avf.agentguid) as count
   from AVFeature avf
   join vAgentLabel vl on vl.agentGuid = avf.agentGuid";
@@ -127,7 +129,8 @@ if ($usescopefilter==true) { $tsql2.=" join vdb_Scopes_Machines foo on (foo.agen
 if ($org_filter!="Master") { $tsql2.=" 
  join dbo.DenormalizedOrgToMach on avf.agentGuid = dbo.DenormalizedOrgToMach.AgentGuid
   and dbo.DenormalizedOrgToMach.OrgId = (select id from kasadmin.org where kasadmin.org.ref = '".$org_filter."')"; }
-
+ $tsql2.=" where InstallStatus=1";
+ 
 
  $tsql3 = "select count (distinct avf.agentGuid) as count
   from AVFeature avf";
@@ -177,6 +180,18 @@ $tsql9.=" where quarantined = 1
  group by VirusName
  order by count desc";
 
+ 
+$tsql11 = "select count(AVClientVersion) as count, AVClientVersion
+ from AVFeature";
+if ($usescopefilter==true) { $tsql11.=" join vdb_Scopes_Machines foo on (foo.agentGuid = AVFeature.agentGuid and foo.scope_ref = '".$scope_filter."')"; }
+if ($org_filter!="Master") { $tsql11.=" join dbo.DenormalizedOrgToMach on AVFeature.agentGuid = dbo.DenormalizedOrgToMach.AgentGuid
+  and dbo.DenormalizedOrgToMach.OrgId = (select id from kasadmin.org where kasadmin.org.ref = '".$org_filter."')"; }
+  $tsql11.=" where AVClientVersion is not null
+ group by AVClientVersion
+ order by AVClientVersion desc";
+
+ 
+ 
 
 $stmt = sqlsrv_query( $conn, $tsql);
 if( $stmt === false )
@@ -243,6 +258,12 @@ if( $stmt10 === false )
      die( print_r( sqlsrv_errors(), true));
 }
 
+$stmt11 = sqlsrv_query( $conn, $tsql11);
+if( $stmt11 === false )
+{
+     echo "Error in executing query.<br/>";
+     die( print_r( sqlsrv_errors(), true));
+}
 
 $row2 = sqlsrv_fetch_array( $stmt2, SQLSRV_FETCH_ASSOC);
 $checked_count = $row2['count'];
@@ -263,14 +284,12 @@ $row10 = sqlsrv_fetch_array( $stmt10, SQLSRV_FETCH_ASSOC);
 $issues = $row10['count'];
 
 
+
 echo "<div class=\"heading heading2\">";
 echo "Security (AVG) Workstation Status";
 echo "<div class=\"topn\">showing first ".$resultcount."</div>";
 echo "</div>";
 
-
-// spacer
-echo "<div class=\"spacer\"></div>";
 
 
 // installs
@@ -332,13 +351,31 @@ echo "<div class=\"spacer\"></div>";
   echo "<font color =\"".$color."\">".$inprogress."</font>";
   echo "</div>";
   echo "</div>";
+  
+ // spacer
+echo "<div class=\"spacer\"></div>";
 
+
+// AV versions installed stats
+echo "<div class=\"datatable\">";
+echo "<table id=\"avversions\"><caption>AVG Installed Versions</caption>";
+echo "<tr><th class=\"colL\">AVG Version</th><th class=\"colL\">Count</th></tr>";
+while( $row = sqlsrv_fetch_array( $stmt11, SQLSRV_FETCH_ASSOC))
+{
+    echo "<tr><td class=\"colL\">".$row['AVClientVersion']."</td><td class=\"colL\">".$row['count']."</td></tr>";
+}
+echo "</table>";
+echo "</div>";
+
+
+
+// spacer
+echo "<div class=\"spacer\"></div>";
 
   
 echo "<div class=\"datatable\">";
 echo "<table id=\"avgwsstats\">";
 echo "<tr><th class=\"colL\">Machine Name</th><th class=\"colM\">Status</th><th class=\"colM\">Active Threats</th><th class=\"colM\">Protection</th><th class=\"colM\">Client Version</th><th class=\"colM\">AV Signatures</th><th class=\"colM\">Last Time Sigs Updated</th></tr>";
-
 
 
 while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC))
@@ -347,7 +384,12 @@ while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC))
   echo "<tr><td class=\"colL\">";
   showAgentIcon($row['online'],$row['currentLogin']);  
   echo "&nbsp;".$row['displayName']."</td>";
-  echo "<td class=\"colM\">".$row['InstallationStatus']."</td>";
+  
+  $color='black';
+  if ($row['InstallationStatus']== "Failure") { $color = 'red'; };
+  
+  
+  echo "<td class=\"colM\"><font color=\"".$color."\">".$row['InstallationStatus']."</color></td>";
   
   echo "<td class=\"colM\">";  
   if ($row['ActiveThreats']>0) {
