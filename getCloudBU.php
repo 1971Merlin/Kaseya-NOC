@@ -156,7 +156,7 @@ echo "</div>";
 
 $row2a = sqlsrv_fetch_array( $stmt2a, SQLSRV_FETCH_ASSOC);
 
-echo "<div class=\"datatable2\">";
+echo "<div class=\"datatable\">";
 echo "<table id=\"cloudinfolicstats\">";
 echo "<caption class=\"heading3\">Licence Information</caption>";
 echo "<tr><th>&nbsp;</th><th>Server</th><th>Workstation</th><th>VM</th></tr>";
@@ -216,8 +216,6 @@ echo "<div class=\"spacer\"></div>";
 
 
 
-
-
 echo "<div class=\"heading heading2\">";
 echo "Endpoints with Errors";
 echo "</div>";
@@ -271,6 +269,7 @@ echo "</div>";
 //* spacer *//
 //* in progress *//
 echo "<div class=\"spacer\"></div>";
+
 
 
 
@@ -332,6 +331,8 @@ echo "<div class=\"spacer\"></div>";
 
 
 //* success *//
+
+
 
 
 echo "<div class=\"heading heading2\">";

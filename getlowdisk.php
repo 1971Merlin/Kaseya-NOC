@@ -43,6 +43,230 @@ echo "<div class=\"topn\">showing first ".$resultcount."</div>";
 echo "</div>";
 
 
+
+$datax = array();
+$datay = array();
+
+while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC))
+{
+
+  $datay[] = array($row['MachineName'],$row['percFree'],$row['FreeSpace']);
+  
+
+}
+
+
+
+echo "<div id=\"lowDiskGraph\" class=\"graphL\"></div>";
+
+
+// spacer
+echo "<div class=\"spacer\"></div>";
+
+
+
+?>
+<script type="text/javascript">
+var chartLDCounts;
+
+$(document).ready(function () {
+
+	Highcharts.setOptions({
+global: {
+useUTC: false
+		},
+credits: {
+enabled: false
+		}
+	});	
+
+if (chartLDCounts) chartLDCounts.destroy();
+
+chartLDCounts = new Highcharts.Chart({
+
+chart: {
+renderTo: 'lowDiskGraph',
+type: 'column',
+height: 400,
+width: 650,	
+alignTicks: false,
+animation: false,
+},
+
+tooltip: { enabled: true,
+shared: true
+ },
+
+ 
+
+legend: {
+enabled: false,
+align: 'left',
+labelFormat: '<b>{name}</b> {y}',
+verticalAlign: 'middle',
+layout: 'vertical',
+symbolHeight: 9,
+itemStyle: { fontSize: '9px', fontWeight: 'normal' },
+margin: 0,
+borderWidth: 1,
+borderRadius: 3,
+backgroundColor: '#f0f0f0'
+},
+
+
+ 
+
+plotOptions: {
+	
+
+  
+        column: {
+            	animation: false,
+
+				dataLabels: {
+					enabled: true
+				}
+			
+        }
+    },
+	
+	
+	
+	
+    title: {
+        text: 'Agents with Low Disk Space',
+		useHTML: true,
+        align: 'center',
+		verticalAlign: 'top',
+		style: {
+             fontWeight: 'bold',
+            color: 'black',
+        fontFamily: 'Arial,Helvetica,sans-serif',
+    fontSize: '14px',
+	}
+ 
+    },	
+	
+	
+xAxis : { categories: [<?php 
+
+
+   foreach($datay as $val) {
+	echo "'".$val[0]."',";
+	}
+
+
+?>]
+
+
+},
+
+
+
+    yAxis: [{
+        title: {
+            text: 'Free Space (Mb)',
+			style: {
+			color: 'teal'
+			},
+        },
+		labels: {
+			style: {
+			color: 'teal'
+			},
+    formatter: function () {
+      return this.value + ' Mb';
+    },
+	min: 0,
+	max: <?php echo max(array_column($datay, 2)) ?>,
+  }
+    }, {
+        title: {
+            text: 'Free Space (Percent)',
+			style: { 
+				color : 'purple'
+			},
+        },
+		labels: {
+			style: {
+			color: 'purple'
+			},
+	 formatter: function () {
+      return this.value + ' %';
+    },
+
+		},
+
+		min : 0,
+		max : 15,
+        opposite: true,
+    }],
+
+	
+
+series: [<?php
+
+
+
+
+$percfree = array_column($datay, 1);
+$freesize = array_column($datay, 2);
+
+
+
+	echo "{ name: '% Free', type: 'line', yAxis:1, zIndex: 2, color: 'purple', data: [";
+	
+
+    foreach($percfree as $val) {
+			echo $val,", ";
+		}
+	
+	echo "]},";
+
+
+	echo "{ name: 'Mb Free',  type: 'column', zIndex: 1, color: 'teal', data: [";
+	
+
+    foreach($freesize as $val) {
+			echo $val,", ";
+		}
+	
+	echo "]}";
+
+
+	
+?>]
+	
+
+
+	
+		
+	})
+});
+</script>
+<?php 
+//end chart
+
+
+
+
+echo "<div class=\"heading heading2\">";
+echo "Agents with low Disk Space";
+echo "</div>";
+
+
+
+
+
+
+$stmt = sqlsrv_query( $conn, $tsql);
+if( $stmt === false )
+{
+     echo "Error in executing query.<br/>";
+     die( print_r( sqlsrv_errors(), true));
+}
+
+
 echo "<div class=\"datatable\">";
 echo "<table id=\"lowdisklist\">";
 echo "<tr><th class=\"colL\">Machine Name</th><th class=\"colM\">Drive</th><th class=\"colL\">Volume Label</th><th class=\"colR\">Free Space</th><th class=\"colR\">Total Space</th><th class=\"colM\">Free Space %</th></tr>";

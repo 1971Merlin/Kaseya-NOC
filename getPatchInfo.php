@@ -152,15 +152,9 @@ echo "<div class=\"heading\">";
 echo "Global Patching Status";
 echo "</div>";
 
-// 
-
 echo "<div id=\"PatchSvrCountsGraph\" class=\"graphL\"></div>";
 
 echo "<div id=\"PatchWsCountsGraph\" class=\"graphR\"></div>";
-
-
-
-
 
 
 ?>

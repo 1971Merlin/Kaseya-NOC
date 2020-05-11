@@ -81,7 +81,7 @@ while( $row4 = sqlsrv_fetch_array( $stmt4, SQLSRV_FETCH_ASSOC))
 $row3 = sqlsrv_fetch_array( $stmt3, SQLSRV_FETCH_ASSOC);
 $numVulns = $row3['totalVulnerabilities'];
 
-
+echo "<div class=\"graphL\">";
 
 echo "<div class=\"minibox\">";
 	echo "<div class=\"miniheading\"># Vulnerabilities</div>";
@@ -91,10 +91,13 @@ echo "<div class=\"minibox\">";
 echo "</div>";
 
 
+echo "<div id=\"smStatusGraph\" class=\"graph\"></div>";
 
-echo "<div id=\"smStatusGraph\" class=\"graphL\"></div>";
 
-echo "<div id=\"smTopVulnsGraph\" class=\"graphR\">foo bar</div>";
+echo "</div>";
+
+
+echo "<div id=\"smTopVulnsGraph\" class=\"graphR\"></div>";
 
 // spacer
 echo "<div class=\"spacer\"></div>";
@@ -124,8 +127,9 @@ chart: {
 renderTo: 'smStatusGraph',
 type: 'pie',
 height: 150,
-width: 380,	
+width: 330,	
 margin: [0, 0, 0, 0],
+animation: false,
 },
 
 tooltip: { enabled: true },
@@ -140,7 +144,7 @@ verticalAlign: 'middle',
 layout: 'vertical',
 symbolHeight: 9,
 itemStyle: { fontSize: '9px', fontWeight: 'normal' },
-margin: 0,
+margin: 1,
 borderWidth: 1,
 borderRadius: 3,
 backgroundColor: '#f0f0f0'
@@ -165,7 +169,7 @@ plotOptions: {
             },
             startAngle: -90,
             endAngle: 90,
-            center: ['75%', '80%'],
+            center: ['65%', '80%'],
             size: '150%',
 			colors: ['#ff0000','#009900']
         }
@@ -180,7 +184,7 @@ plotOptions: {
         align: 'center',
         verticalAlign: 'middle',
 		y: 60,
-		x: 80,
+		x: 40,
 		style: {
              fontWeight: 'bold',
             color: 'black',
@@ -233,10 +237,11 @@ chartSMTopVuln = new Highcharts.Chart({
 chart: {
 	renderTo: 'smTopVulnsGraph',
 	type: 'column',
-	height: 300,
-	width: 350,	
+	height: 250,
+	width: 300,	
     borderColor: '#eeeeee',
-    borderWidth: 1
+    borderWidth: 1,
+	animation: false,
 },
 
 tooltip: { enabled: true },
