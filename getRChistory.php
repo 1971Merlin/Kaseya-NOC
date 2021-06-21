@@ -3,16 +3,15 @@ $pageContent = null;
 ob_start();
 include 'dblogin.php';
 echo "<div class=\"heading\">Remote Control History Last 24Hrs</div>";
-  
 
 
- // Classic RC // 
+// Classic RC // 
 $tsql = "select adminname, (SUM(duration) / (1000*60)) as total, count(adminName) as num, type from rcLog 
 		 where eventTime > DATEADD(day,-1,getutcdate()) and duration>0 and rclog.agentGuid != 123456789
 		 group by adminname, type";
 
 
- // VSA 7.0 only //		 
+// VSA 7.0 only //		 
 $tsql2 = "select count (adminName) as count, adminName, (
 	select top 1 eventTime
 	from adminLog
@@ -23,8 +22,8 @@ $tsql2 = "select count (adminName) as count, adminName, (
   where an.eventTime > DATEADD(day,-1,getutcdate()) and description like 'Remote control%'
   group by adminName";
 
-  
- // VSA R8+ //
+
+// VSA R8+ //
  $tsql3 = "select adminname, sum(datediff(mi,startTime,lastActiveTime)) as total, count(adminName) as num, sessionType as type
    from KaseyaRemoteControl.Log
    where startTime > DATEADD(day,-1,getdate()) and datediff(mi,startTime,lastActiveTime) > 0

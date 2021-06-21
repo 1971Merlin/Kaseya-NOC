@@ -4,6 +4,9 @@ ob_start();
 include 'dblogin.php';
 
 
+$NPP = $_SESSION['NPP'];
+
+
 //* patch policy members *//
 
 $tsql = "SELECT distinct top ".$resultcount." vl.displayName as machName,
@@ -27,17 +30,25 @@ if ($org_filter!="Master") { $tsql.="
   join vPatchStatusByAgent pp on pp.agentGuid = vppm.agentGuid
   where PolicyName not like '-No policy-' and (missingApproved >0 or failed >0)
   order by missingApproved desc, rebootPending desc,  failed desc,  pending desc";
-  
-  
+
 $tsql2 = "SELECT distinct count (agentGuid) as Count, Category FROM vPatchPieChartCountsUsePolicy where osinformation like '%server%'
  group by category order by Count asc";
- 
 
- 
 $tsql3 = "SELECT distinct count (agentGuid) as Count, Category FROM vPatchPieChartCountsUsePolicy where osinformation not like '%server%'
  group by category order by Count asc";
-  
-  
+ 
+ 
+ $tsql4 = "SELECT sum(totalPatches) as tp, sum(missingApproved) as mp, count(vppm.agentGuid) as num
+  FROM vPatchPolicyMember as vppm
+  join vPatchStatusByAgent pp on pp.agentGuid = vppm.agentGuid
+ where PolicyName not like '-No policy-' and pp.OSInformation like '%server%'";
+
+ $tsql5 = "SELECT sum(totalPatches) as tp, sum(missingApproved) as mp, count(vppm.agentGuid) as num
+  FROM vPatchPolicyMember as vppm
+  join vPatchStatusByAgent pp on pp.agentGuid = vppm.agentGuid
+ where PolicyName not like '-No policy-' and pp.OSInformation not like '%server%'";
+
+
 ?>
 <div id="patchdialog"></div>
 <script type="text/javascript">
@@ -66,12 +77,6 @@ $( "#patchlist td:first-child" ).mouseover(function() {
 </script>
 <?php
   
-$stmt = sqlsrv_query( $conn, $tsql);
-if( $stmt === false )
-{
-     echo "Error in executing query.<br/>";
-     die( print_r( sqlsrv_errors(), true));
-}
 
   
  //start chart
@@ -94,6 +99,21 @@ if( $stmt3 === false )
      die( print_r( sqlsrv_errors(), true));
 }
 
+
+$stmt4 = sqlsrv_query( $conn, $tsql4);
+if( $stmt4 === false )
+{
+     echo "Error in executing query.<br/>";
+     die( print_r( sqlsrv_errors(), true));
+}
+
+
+$stmt5 = sqlsrv_query( $conn, $tsql5);
+if( $stmt5 === false )
+{
+     echo "Error in executing query.<br/>";
+     die( print_r( sqlsrv_errors(), true));
+}
 
 $colorlist = array();
 
@@ -365,6 +385,32 @@ data: [<?php echo join($datay, ',') ?>],
 //end chart
 
 
+echo "<div class=\"datatable\">";
+echo "<table id=\"scores\">";
+echo "<tr><th class=\"colL\">Type</th><th class=\"colM\">Patch Score</th></tr>";
+
+
+$row4 = sqlsrv_fetch_array( $stmt4, SQLSRV_FETCH_ASSOC);
+echo "<tr><td>Server</td><td>" . round (100 - (100 * ($row4['mp'] / $row4['tp']) ),2) . "%</td></tr>";
+
+$row5 = sqlsrv_fetch_array( $stmt5, SQLSRV_FETCH_ASSOC);
+echo "<td>Workstation</td><td>" . round (100 - (100 * ($row5['mp'] / $row5['tp']) ),2) . "%</td></tr>";
+
+echo "</table>";
+echo "</div>";
+
+
+
+
+
+
+$stmt = sqlsrv_query( $conn, $tsql);
+if( $stmt === false )
+{
+     echo "Error in executing query.<br/>";
+     die( print_r( sqlsrv_errors(), true));
+}
+
 
 echo "<div class=\"heading heading2\">";
 echo "Patching Status (Patch Policy Members)";
@@ -426,6 +472,11 @@ while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC))
 }
 echo "</table>";
 echo "</div>";
+
+
+
+
+if ($NPP !== true) { 
 
 
 
@@ -519,6 +570,8 @@ while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC))
 
 echo "</table>";
 echo "</div>";
+
+}
 
 
 sqlsrv_close( $conn );

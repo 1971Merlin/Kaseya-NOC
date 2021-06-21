@@ -4,13 +4,31 @@ ob_start();
 include 'dblogin.php';
 
 
+
+// dont try to simplify tsql1. Needs to be this way as now rows are returned if no machines are counted (not null or zero returned!!)
   
-$tsql = "SELECT compliantMachines, vulnerableMachines from SM.vNumberCompliant, SM.vNumberVulnerable";
-$tsql2 = "Select * from SM.vTopXMachinesMissingPatches";
-$tsql3 = "Select * from SM.vTotalVulnerabilities";
-$tsql4 = "Select * from SM.vTopXVulnerabilities";
-  
-  
+$tsql = "SELECT * from 
+(select isnull(min(compliantMachines),0) as compliantMachines from SM.vNumberCompliant) t1,
+(select isnull(min(vulnerableMachines),0) as vulnerableMachines from SM.vNumberVulnerable) t2,
+(select count(AgentGuid) as fullyPatchedMachines from SM.vFullyPatchedAgents) t3
+";
+
+$tsql2 = "Select top 10 vl.displayName, countOfVulnerabilties, vl.online as online, vl.currentLogin
+ from SM.vTopXMachinesMissingPatches
+ join vAgentLabel vl on vl.agentGuid = SM.vTopXMachinesMissingPatches.agentGuid
+ order by countOfVulnerabilties desc";
+
+$tsql3 = "Select count(machName) as totalVulnerabilities from SM.vUnappliedPatches where ApprovalStatus not like 'Suppressed'";
+$tsql4 = "Select top 5 Name, countOfMachines from SM.vTopXVulnerabilities order by countOfMachines desc";
+$tsql5 = "Select count(agentguid) as machines from SM.machine";
+ 
+ $tsql6 = "SELECT top ".$resultcount." vl.displayName,DateCreated,OperationCategory,RequestJson,JobName,AgentJobScheduleTime,TotalToComplete,NumberComplete,PercentComplete,DateModified,ProgressBarValue, vl.online as online, vl.currentLogin
+  FROM SM.OperationQueue
+  join vAgentLabel vl on vl.agentGuid = sm.OperationQueue.agentGuid
+  where vl.online > 0
+  order by DateModified desc, OperationCategory, displayName";
+
+
 $stmt = sqlsrv_query( $conn, $tsql);
 if( $stmt === false )
 {
@@ -18,8 +36,13 @@ if( $stmt === false )
      die( print_r( sqlsrv_errors(), true));
 }
 
+$stmt5 = sqlsrv_query( $conn, $tsql5);
+if( $stmt5 === false )
+{
+     echo "Error in executing query.<br/>";
+     die( print_r( sqlsrv_errors(), true));
+}
 
- 
 $stmt2 = sqlsrv_query( $conn, $tsql2);
 if( $stmt2 === false )
 {
@@ -31,7 +54,6 @@ echo "<div class=\"heading\">";
 echo "Software Management Status";
 echo "</div>";
 
-
 $stmt3 = sqlsrv_query( $conn, $tsql3);
 if( $stmt3 === false )
 {
@@ -39,10 +61,15 @@ if( $stmt3 === false )
      die( print_r( sqlsrv_errors(), true));
 }
 
-
-
 $stmt4 = sqlsrv_query( $conn, $tsql4);
 if( $stmt4 === false )
+{
+     echo "Error in executing query.<br/>";
+     die( print_r( sqlsrv_errors(), true));
+}
+
+$stmt6 = sqlsrv_query( $conn, $tsql6);
+if( $stmt6 === false )
 {
      echo "Error in executing query.<br/>";
      die( print_r( sqlsrv_errors(), true));
@@ -55,10 +82,11 @@ while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC))
 {
   $fooa = $row['compliantMachines'];
   $foob = $row['vulnerableMachines'];
+  $fooc = $row['fullyPatchedMachines'];
   
   $datax[] = "['Vulnerable',".$foob."]";
   $datax[] = "['Compliant',".$fooa."]";
-
+  $datax[] = "['Fully Patched',".$fooc."]";
 }
 
 
@@ -73,7 +101,6 @@ while( $row4 = sqlsrv_fetch_array( $stmt4, SQLSRV_FETCH_ASSOC))
   
   $datay[] = "['".$fooa."']";
   $dataz[] = $foob;
-  
 }
 
 
@@ -81,27 +108,42 @@ while( $row4 = sqlsrv_fetch_array( $stmt4, SQLSRV_FETCH_ASSOC))
 $row3 = sqlsrv_fetch_array( $stmt3, SQLSRV_FETCH_ASSOC);
 $numVulns = $row3['totalVulnerabilities'];
 
+$row5 = sqlsrv_fetch_array( $stmt5, SQLSRV_FETCH_ASSOC);
+$numMachines = $row5['machines'];
+
+
+
 echo "<div class=\"graphL\">";
 
-echo "<div class=\"minibox\">";
-	echo "<div class=\"miniheading\"># Vulnerabilities</div>";
-	echo "<div class=\"mininum\">";
-	echo "<font color=\"#990000\">".$numVulns."</font>";
+	echo "<div class=\"minibox\">";
+		echo "<div class=\"miniheading\"># Vulnerabilities</div>";
+		echo "<div class=\"mininum\">";
+		echo "<font color=\"#990000\">".$numVulns."</font>";
+		echo "</div>";
 	echo "</div>";
+
+	echo "<div class=\"minibox\">";
+		echo "<div class=\"miniheading\"># Managed Machines</div>";
+		echo "<div class=\"mininum\">";
+		echo "<font color=\"#990000\">".$numMachines."</font>";
+		echo "</div>";
+	echo "</div>";
+
+
+
+
+
+	if (empty($datax)==false) { echo "<div id=\"smStatusGraph\" class=\"graph\"></div>"; }
+
 echo "</div>";
 
 
-echo "<div id=\"smStatusGraph\" class=\"graph\"></div>";
 
+if (empty($datay)==false) { echo "<div id=\"smTopVulnsGraph\" class=\"graphR\"></div>"; }
 
-echo "</div>";
-
-
-echo "<div id=\"smTopVulnsGraph\" class=\"graphR\"></div>";
 
 // spacer
 echo "<div class=\"spacer\"></div>";
-
 
 
 ?>
@@ -127,7 +169,7 @@ chart: {
 renderTo: 'smStatusGraph',
 type: 'pie',
 height: 150,
-width: 330,	
+width: 350,	
 margin: [0, 0, 0, 0],
 animation: false,
 },
@@ -171,7 +213,7 @@ plotOptions: {
             endAngle: 90,
             center: ['65%', '80%'],
             size: '150%',
-			colors: ['#ff0000','#009900']
+			colors: ['#ff0000','#009900','#1248ce']
         }
     },
 	
@@ -321,7 +363,9 @@ echo "<tr><th class=\"colL\">Machine</th><th class=\"colL\"># of Vulnerabilities
 
 while( $row2 = sqlsrv_fetch_array( $stmt2, SQLSRV_FETCH_ASSOC))
 {
-  echo "<tr><td class=\"colL\">".$row2['displayName']."</td>";
+  echo "<tr><td class=\"colL\">";
+  showAgentIcon($row2['online'],$row2['currentLogin']); 
+  echo "&nbsp;".$row2['displayName']."</td>";
   echo "<td class=\"colM\">".$row2['countOfVulnerabilties']."</td></tr>";
 }
 
@@ -330,6 +374,47 @@ echo "</table>";
 echo "</div>";
 
 
+echo "<div class=\"heading heading2\">";
+echo "Machines with Current Activity";
+echo "<div class=\"topn\">showing top ".$resultcount."</div>";
+echo "</div>";
+
+
+echo "<div class=\"datatable\">";
+echo "<table id=\"ActiveMachines\">";
+echo "<tr><th class=\"colL\">Machine</th><th class=\"colL\">Activity</th><th class=\"colM\">Progress %</th></tr>";
+
+
+while( $row6 = sqlsrv_fetch_array( $stmt6, SQLSRV_FETCH_ASSOC))
+{
+	
+  echo "<tr><td class=\"colL\">";
+  showAgentIcon($row6['online'],$row6['currentLogin']); 
+  echo "&nbsp;".$row6['displayName']."</td>";
+  echo "<td class=\"colL\">".$row6['OperationCategory']."</td>";
+  
+  
+  
+  
+  
+  
+  echo "<td class=\"colM\" style=\"background-image: url('images/1x1blue.png'); background-repeat: no-repeat; background-size:".$row6['ProgressBarValue']."% 100%;\">".$row6['ProgressBarValue']."</td>";
+  echo "</tr>";
+
+}
+
+// Blackout 	-> Pause symbol
+// Scheduled 	->  Green 'scan now' symbol
+// PD_Deploy 	-> CD/Floppy green down arrow icon
+// Progress 	-> CD/Floppy green down arrow icon
+// Scan 		-> Green 'scan now' symbol
+// PD_Res 		-> Resuming 		-> CD/Floppy green down arrow icon
+// PD_Rescan	-> Rescanning files -> CD/Floppy green down arrow icon
+// PD_RebReb	-> Rebooting	-> Power button icon
+
+
+echo "</table>";
+echo "</div>";
 
 
 

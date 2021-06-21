@@ -3,10 +3,8 @@ $pageContent = null;
 ob_start();
 include 'dblogin.php';
 echo "<div class=\"heading\">Remote Control Details Last 24Hrs</div>";
-  
 
 $rc = array();
-
 
  // Classic RC // 
 $tsql = "select adminName, eventTime, type, (duration/(1000*60)) as total, st.Machine_GroupID as machine, 99 as completed
@@ -36,17 +34,14 @@ if ($org_filter!="Master") { $tsql3.="
    where startTime > DATEADD(day,-1,getdate()) and datediff(mi,startTime,lastActiveTime) > 0
    order by startTime desc";
 
-   
+
  // LC sessions
  $tsql4 = "select UserName, TimeStamp, LogEntry, EventType, IPAddress, AgentName
  FROM Agents.KLCAuditLog
  where logEntry like 'Session started against endpoint:%' and timestamp > getdate()-1 
  order by timestamp desc";
- 
 
-   
-   
- 
+
 // get classic sessions info //
 
 $stmt = sqlsrv_query( $conn, $tsql);
@@ -107,13 +102,9 @@ if ($KVer > 7 ) {
 
 	while( $row = sqlsrv_fetch_array( $stmt4, SQLSRV_FETCH_ASSOC))
 	{
-		$rc[] = array( 'adminName' => $row['UserName'], 'time' => $row['TimeStamp'], 'duration' => 0, 'machine' => $row['AgentName'], 'type' =>999, 'completed' => 0);
+		$rc[] = array( 'adminName' => $row['UserName'], 'time' => $row['TimeStamp'], 'duration' => 0, 'machine' => $row['AgentName'], 'type' =>999, 'completed' => 1);
 	}
 
-
-
-	
-	
 }
 
 
@@ -160,11 +151,11 @@ if ($KVer > 7 ) {
 //	if ($value['type']==201) { echo "VNC"; } else
 	if ($value['type']==201) { echo "<img src=\"images/VNCicon.gif\" title=\"kVNC\">"; } else
 	if ($value['type']==202) { echo "RAdmin"; } else
-	if ($value['type']==203) { echo "RDP"; } else
+	if ($value['type']==203) { echo "<img src=\"images/rdp.png\" title=\"RDP\">"; } else
 	if ($value['type']==204) { echo "PC Anywhere"; } else
 	if ($value['type']==205) { echo "K-VNC"; } else
 	if ($value['type']==206) { echo "KRC(beta?)"; } else
-	if ($value['type']==999) { echo "<img src=\"images/liveconnect.png\" title=\"KLC\">"; } else
+	if ($value['type']==999) { echo "<img src=\"images/liveconnect.png\" title=\"Live Connect\">"; } else
 	echo "Unknown ID=".$value['type'];	
     echo "</td></tr>";
 	
