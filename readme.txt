@@ -115,7 +115,7 @@ if you want the 'recent logs' panels to be shorter or taller, you can set the 'r
 
 support:
 
-post in the K users forums thread here: http://community.kaseya.com/xsp/f/139/t/17555.aspx or email me at craig@mytechsolutions.com.au  note that whilst I will always accept suggestions and comments on how to improve the product, I simply cannot assist you with setup or debugging help if you can't make it work.
+As of January, 2022. This code is unsupported, as I no longer work with Kaseya.
 
 ------------------------------------------------------------------------------------
 
