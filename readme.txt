@@ -1,3 +1,15 @@
+This project is no longer maintained as at January, 2022. This is becuase I no longer use/have access to the Kaseya Platform.
+
+Thank you for your support over the years; this project wil lremain read only/archived for future use.
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
 Welcome, Kaseya user!
 
 Herein be the Install Instructions.
